@@ -9,11 +9,11 @@ public class Processo {
     private Date dataDistribuicao;
     private Date dataParecer;
     private byte parecer;
-    private tipoDecisao decisaoRelator;
+    private TipoDecisao decisaoRelator;
     
     
     public Processo(int id, String numero, Date dataRecepcao, Date dataDistribuicao, Date dataParecer, byte parecer,
-            tipoDecisao decisaoRelator) {
+            TipoDecisao decisaoRelator) {
         this.id = id;
         this.numero = numero;
         this.dataRecepcao = dataRecepcao;
@@ -84,12 +84,12 @@ public class Processo {
     }
 
 
-    public tipoDecisao getDecisaoRelator() {
+    public TipoDecisao getDecisaoRelator() {
         return decisaoRelator;
     }
 
 
-    public void setDecisaoRelator(tipoDecisao decisaoRelator) {
+    public void setDecisaoRelator(TipoDecisao decisaoRelator) {
         this.decisaoRelator = decisaoRelator;
     }
 
