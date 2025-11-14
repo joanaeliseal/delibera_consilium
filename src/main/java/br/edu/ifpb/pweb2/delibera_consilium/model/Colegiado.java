@@ -1,0 +1,83 @@
+package br.edu.ifpb.pweb2.delibera_consilium.model;
+
+import java.util.Date;
+
+public class Colegiado {
+    private int id;
+    private Date dataInicio;
+    private Date dataFim;
+    private String descricao;
+    private String portaria;
+    private String curso;
+    
+    
+    public Colegiado(int id, Date dataInicio, Date dataFim, String descricao, String portaria, String curso) {
+        this.id = id;
+        this.dataInicio = dataInicio;
+        this.dataFim = dataFim;
+        this.descricao = descricao;
+        this.portaria = portaria;
+        this.curso = curso;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+
+
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
+    }
+
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+
+    public String getPortaria() {
+        return portaria;
+    }
+
+
+    public void setPortaria(String portaria) {
+        this.portaria = portaria;
+    }
+
+
+    public String getCurso() {
+        return curso;
+    }
+
+
+    public void setCurso(String curso) {
+        this.curso = curso;
+    }
+
+}
