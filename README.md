@@ -22,7 +22,7 @@ delibera_consilium/
 ├── src/
 │   ├── main/
 │   │   ├── java/br/edu/ifpb/pweb2/delibera_consilium/
-│   │   │   ├── controller/      # Controladores REST/MVC
+│   │   │   ├── controller/      # Controladores REST/MVC 
 │   │   │   ├── model/           # Entidades e modelos de dados
 │   │   │   │   ├── Aluno.java
 │   │   │   │   ├── Assunto.java
@@ -35,16 +35,23 @@ delibera_consilium/
 │   │   │   │   ├── TipoVoto.java
 │   │   │   │   └── Voto.java
 │   │   │   ├── repository/      # Camada de acesso a dados
-│   │   │   ├── service/         # Lógica de negócio
+│   │   │   │   ├── AlunoRepository.java
+│   │   │   │   ├── AssuntoRepository.java
+│   │   │   │   ├── ColegiadoRepository.java
+│   │   │   │   ├── ProcessoRepository.java
+│   │   │   │   ├── ProfessorRepository.java
+│   │   │   │   ├── ReuniaoRepository.java
+│   │   │   │   └── VotoRepository.java
+│   │   │   ├── service/         # Lógica de negócio (vazio no momento)
 │   │   │   └── DeliberaConsiliumApplication.java
 │   │   └── resources/
-│   │       ├── application.properties  # Configurações da aplicação
-│   │       ├── static/          # Arquivos CSS, JS, imagens
-│   │       └── templates/       # Templates HTML (Thymeleaf)
+│   │       ├── application.properties
+│   │       ├── static/          # Arquivos CSS, JS, imagens 
+│   │       └── templates/       # Templates HTML (Thymeleaf) 
 │   └── test/
 │       └── java/br/edu/ifpb/pweb2/delibera_consilium/
 │           └── DeliberaConsiliumApplicationTests.java
-├── pom.xml                      # Arquivo de configuração Maven
+├── pom.xml
 └── README.md
 ```
 
