@@ -80,6 +80,13 @@ spring.datasource.username=seu_usuario
 spring.datasource.password=sua_senha
 ```
 
+### Crie seu banco de dados
+1. Abra seu gerenciador de banco de dados ou terminal.
+2. Crie um banco de dados vazio com o nome do projeto:
+```properties
+CREATE DATABASE delibera_consilium;
+```
+
 3. Compile e execute o projeto:
 ```bash
 mvn clean install
