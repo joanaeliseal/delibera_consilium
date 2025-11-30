@@ -1,83 +1,33 @@
 package br.edu.ifpb.pweb2.delibera_consilium.model;
 
-import java.util.Date;
+import jakarta.persistence.*;
+import lombok.Data;
+import java.time.LocalDate;
+import java.util.List;
 
+@Data
+@Entity
 public class Colegiado {
-    private int id;
-    private Date dataInicio;
-    private Date dataFim;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
     private String descricao;
     private String portaria;
     private String curso;
-    
-    
-    public Colegiado(int id, Date dataInicio, Date dataFim, String descricao, String portaria, String curso) {
-        this.id = id;
-        this.dataInicio = dataInicio;
-        this.dataFim = dataFim;
-        this.descricao = descricao;
-        this.portaria = portaria;
-        this.curso = curso;
-    }
 
+    // Relacionamento com Professores (Membros)
+    @ManyToMany
+    @JoinTable(
+        name = "colegiado_membros",
+        joinColumns = @JoinColumn(name = "colegiado_id"),
+        inverseJoinColumns = @JoinColumn(name = "professor_id")
+    )
+    private List<Professor> membros;
 
-    public int getId() {
-        return id;
-    }
-
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-
-    public Date getDataInicio() {
-        return dataInicio;
-    }
-
-
-    public void setDataInicio(Date dataInicio) {
-        this.dataInicio = dataInicio;
-    }
-
-
-    public Date getDataFim() {
-        return dataFim;
-    }
-
-
-    public void setDataFim(Date dataFim) {
-        this.dataFim = dataFim;
-    }
-
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-
-    public String getPortaria() {
-        return portaria;
-    }
-
-
-    public void setPortaria(String portaria) {
-        this.portaria = portaria;
-    }
-
-
-    public String getCurso() {
-        return curso;
-    }
-
-
-    public void setCurso(String curso) {
-        this.curso = curso;
-    }
-
+    // Um colegiado tem várias reuniões
+    @OneToMany(mappedBy = "colegiado")
+    private List<Reuniao> reunioes;
 }
