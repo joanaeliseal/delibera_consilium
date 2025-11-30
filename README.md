@@ -42,7 +42,12 @@ delibera_consilium/
 │   │   │   │   ├── ProfessorRepository.java
 │   │   │   │   ├── ReuniaoRepository.java
 │   │   │   │   └── VotoRepository.java
-│   │   │   ├── service/         # Lógica de negócio (vazio no momento)
+│   │   │   ├── service/         # Lógica de negócio
+│   │   │   │   ├── AlunoService.java
+│   │   │   │   ├── AssuntoService.java
+│   │   │   │   ├── ColegiadoService.java
+│   │   │   │   ├── ProcessoService.java
+│   │   │   │   └── ProfessorService.java
 │   │   │   └── DeliberaConsiliumApplication.java
 │   │   └── resources/
 │   │       ├── application.properties
