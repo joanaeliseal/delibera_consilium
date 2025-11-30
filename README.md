@@ -24,6 +24,16 @@ delibera_consilium/
 │   │   ├── java/br/edu/ifpb/pweb2/delibera_consilium/
 │   │   │   ├── controller/      # Controladores REST/MVC
 │   │   │   ├── model/           # Entidades e modelos de dados
+│   │   │   │   ├── Aluno.java
+│   │   │   │   ├── Assunto.java
+│   │   │   │   ├── Colegiado.java
+│   │   │   │   ├── Processo.java
+│   │   │   │   ├── Professor.java
+│   │   │   │   ├── Reuniao.java
+│   │   │   │   ├── StatusReuniao.java
+│   │   │   │   ├── TipoDecisao.java
+│   │   │   │   ├── TipoVoto.java
+│   │   │   │   └── Voto.java
 │   │   │   ├── repository/      # Camada de acesso a dados
 │   │   │   ├── service/         # Lógica de negócio
 │   │   │   └── DeliberaConsiliumApplication.java
@@ -32,7 +42,8 @@ delibera_consilium/
 │   │       ├── static/          # Arquivos CSS, JS, imagens
 │   │       └── templates/       # Templates HTML (Thymeleaf)
 │   └── test/
-│       └── java/               # Testes unitários e de integração
+│       └── java/br/edu/ifpb/pweb2/delibera_consilium/
+│           └── DeliberaConsiliumApplicationTests.java
 ├── pom.xml                      # Arquivo de configuração Maven
 └── README.md
 ```
@@ -67,6 +78,13 @@ cd delibera_consilium
 spring.datasource.url=jdbc:postgresql://localhost:5432/delibera_consilium
 spring.datasource.username=seu_usuario
 spring.datasource.password=sua_senha
+```
+
+### Crie seu banco de dados
+1. Abra seu gerenciador de banco de dados ou terminal.
+2. Crie um banco de dados vazio com o nome do projeto:
+```properties
+CREATE DATABASE delibera_consilium;
 ```
 
 3. Compile e execute o projeto:
