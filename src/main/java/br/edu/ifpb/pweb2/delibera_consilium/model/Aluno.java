@@ -1,83 +1,23 @@
 package br.edu.ifpb.pweb2.delibera_consilium.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import java.util.List;
+
+@Data
+@Entity
 public class Aluno {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String nome;
     private String fone;
-    private String Matricula;
+    private String matricula;
     private String login;
     private String senha;
-    
-    
-    public Aluno(int id, String nome, String fone, String matricula, String login, String senha) {
-        this.id = id;
-        this.nome = nome;
-        this.fone = fone;
-        Matricula = matricula;
-        this.login = login;
-        this.senha = senha;
-    }
 
-
-    public int getId() {
-        return id;
-    }
-
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-
-    public String getNome() {
-        return nome;
-    }
-
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-
-    public String getFone() {
-        return fone;
-    }
-
-
-    public void setFone(String fone) {
-        this.fone = fone;
-    }
-
-
-    public String getMatricula() {
-        return Matricula;
-    }
-
-
-    public void setMatricula(String matricula) {
-        Matricula = matricula;
-    }
-
-
-    public String getLogin() {
-        return login;
-    }
-
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-
-    public String getSenha() {
-        return senha;
-    }
-
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
+    // Relacionamento inverso: Um aluno tem vários processos
+    @OneToMany(mappedBy = "interessado")
+    private List<Processo> processos;
 }
-
-
