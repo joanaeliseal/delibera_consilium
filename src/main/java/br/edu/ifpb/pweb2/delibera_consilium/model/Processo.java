@@ -1,96 +1,53 @@
 package br.edu.ifpb.pweb2.delibera_consilium.model;
 
-import java.util.Date;
+import jakarta.persistence.*;
+import lombok.Data;
+import java.time.LocalDate;
+import java.util.List;
 
+@Data
+@Entity
 public class Processo {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String numero;
-    private Date dataRecepcao;
-    private Date dataDistribuicao;
-    private Date dataParecer;
-    private byte parecer;
+    private LocalDate dataRecepcao;
+    private LocalDate dataDistribuicao;
+    private LocalDate dataParecer;
+
+    @Lob
+    private byte[] parecer; // PDF ou Texto do parecer
+
+    @Enumerated(EnumType.STRING)
     private TipoDecisao decisaoRelator;
     
-    
-    public Processo(int id, String numero, Date dataRecepcao, Date dataDistribuicao, Date dataParecer, byte parecer,
-            TipoDecisao decisaoRelator) {
-        this.id = id;
-        this.numero = numero;
-        this.dataRecepcao = dataRecepcao;
-        this.dataDistribuicao = dataDistribuicao;
-        this.dataParecer = dataParecer;
-        this.parecer = parecer;
-        this.decisaoRelator = decisaoRelator;
-    }
+    // Status do processo (CRIADO, DISTRIBUIDO, etc.)
+    // Como você não listou um arquivo Enum separado para isso, deixei como String
+    private String status; 
 
+    // Quem abriu o processo (Aluno)
+    @ManyToOne
+    @JoinColumn(name = "aluno_id")
+    private Aluno interessado;
 
-    public int getId() {
-        return id;
-    }
+    // Assunto do processo
+    @ManyToOne
+    @JoinColumn(name = "assunto_id")
+    private Assunto assunto;
 
+    // Professor Relator (definido pelo Coordenador)
+    @ManyToOne
+    @JoinColumn(name = "relator_id")
+    private Professor relator;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    // Reunião onde o processo foi pautado
+    @ManyToOne
+    @JoinColumn(name = "reuniao_id")
+    private Reuniao reuniao;
 
-
-    public String getNumero() {
-        return numero;
-    }
-
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
-
-    public Date getDataRecepcao() {
-        return dataRecepcao;
-    }
-
-
-    public void setDataRecepcao(Date dataRecepcao) {
-        this.dataRecepcao = dataRecepcao;
-    }
-
-
-    public Date getDataDistribuicao() {
-        return dataDistribuicao;
-    }
-
-
-    public void setDataDistribuicao(Date dataDistribuicao) {
-        this.dataDistribuicao = dataDistribuicao;
-    }
-
-
-    public Date getDataParecer() {
-        return dataParecer;
-    }
-
-
-    public void setDataParecer(Date dataParecer) {
-        this.dataParecer = dataParecer;
-    }
-
-
-    public byte getParecer() {
-        return parecer;
-    }
-
-
-    public void setParecer(byte parecer) {
-        this.parecer = parecer;
-    }
-
-
-    public TipoDecisao getDecisaoRelator() {
-        return decisaoRelator;
-    }
-
-
-    public void setDecisaoRelator(TipoDecisao decisaoRelator) {
-        this.decisaoRelator = decisaoRelator;
-    }
-
+    // Lista de votos dos membros
+    @OneToMany(mappedBy = "processo")
+    private List<Voto> votos;
 }
