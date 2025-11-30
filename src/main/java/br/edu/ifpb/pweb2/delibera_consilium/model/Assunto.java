@@ -1,33 +1,14 @@
 package br.edu.ifpb.pweb2.delibera_consilium.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
 public class Assunto {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String nome;
-    
-    
-    public Assunto(int id, String nome) {
-        this.id = id;
-        this.nome = nome;
-    }
-
-
-    public int getId() {
-        return id;
-    }
-
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-
-    public String getNome() {
-        return nome;
-    }
-
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
 }
