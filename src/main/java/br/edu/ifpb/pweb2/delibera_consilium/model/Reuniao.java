@@ -1,59 +1,30 @@
 package br.edu.ifpb.pweb2.delibera_consilium.model;
 
-import java.util.Date;
+import jakarta.persistence.*;
+import lombok.Data;
+import java.time.LocalDate;
+import java.util.List;
 
+@Data
+@Entity
 public class Reuniao {
-    private int id;
-    private Date dataReuniao;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private LocalDate dataReuniao;
+
+    @Enumerated(EnumType.STRING)
     private StatusReuniao status;
-    private byte ata;
-    
-    
-    public Reuniao(int id, Date dataReuniao, StatusReuniao status, byte ata) {
-        this.id = id;
-        this.dataReuniao = dataReuniao;
-        this.status = status;
-        this.ata = ata;
-    }
 
+    @Lob 
+    private byte[] ata;
 
-    public int getId() {
-        return id;
-    }
+    @ManyToOne
+    @JoinColumn(name = "colegiado_id")
+    private Colegiado colegiado;
 
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-
-    public Date getDataReuniao() {
-        return dataReuniao;
-    }
-
-
-    public void setDataReuniao(Date dataReuniao) {
-        this.dataReuniao = dataReuniao;
-    }
-
-
-    public StatusReuniao getStatus() {
-        return status;
-    }
-
-
-    public void setStatus(StatusReuniao status) {
-        this.status = status;
-    }
-
-
-    public byte getAta() {
-        return ata;
-    }
-
-
-    public void setAta(byte ata) {
-        this.ata = ata;
-    }
-
+    // Processos que estão na pauta desta reunião
+    @OneToMany(mappedBy = "reuniao")
+    private List<Processo> processosEmPauta;
 }
