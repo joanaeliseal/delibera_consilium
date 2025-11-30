@@ -1,46 +1,25 @@
 package br.edu.ifpb.pweb2.delibera_consilium.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
 public class Voto {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
     private TipoVoto voto;
+
     private boolean ausente;
-    
-    
-    public Voto(int id, TipoVoto voto, boolean ausente) {
-        this.id = id;
-        this.voto = voto;
-        this.ausente = ausente;
-    }
 
+    @ManyToOne
+    @JoinColumn(name = "processo_id")
+    private Processo processo;
 
-    public int getId() {
-        return id;
-    }
-
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-
-    public TipoVoto getVoto() {
-        return voto;
-    }
-
-
-    public void setVoto(TipoVoto voto) {
-        this.voto = voto;
-    }
-
-
-    public boolean isAusente() {
-        return ausente;
-    }
-
-
-    public void setAusente(boolean ausente) {
-        this.ausente = ausente;
-    }
-    
+    @ManyToOne
+    @JoinColumn(name = "professor_id")
+    private Professor professor;
 }
-
