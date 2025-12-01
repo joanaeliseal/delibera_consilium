@@ -16,6 +16,9 @@ public interface ProcessoRepository extends JpaRepository<Processo, Long> {
 
     // REQFUNC 2: O aluno consulta seus processos
     List<Processo> findByInteressado(Aluno interessado);
+
+    // Busca processos do aluno x que tenham o status y (REQFUNC 2)
+    List<Processo> findByInteressadoAndStatus(Aluno interessado, String status);
     
     // REQFUNC 7: Coordenador filtra por status (ex: "CRIADO", "DISTRIBUIDO")
     List<Processo> findByStatus(String status);
