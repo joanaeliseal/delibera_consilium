@@ -51,7 +51,7 @@ public class AssuntoController {
         return "admin/assunto/form";
     }
 
-    @GetMapping("/excluir/{id}")
+    @PostMapping("/excluir/{id}")
     public String excluir(@PathVariable Long id, RedirectAttributes redirect) {
         service.excluir(id);
         redirect.addFlashAttribute("msg", "Assunto removido!");
