@@ -22,7 +22,14 @@ delibera_consilium/
 ├── src/
 │   ├── main/
 │   │   ├── java/br/edu/ifpb/pweb2/delibera_consilium/
-│   │   │   ├── controller/      # Controladores REST/MVC 
+│   │   │   ├── controller/      # Controladores REST/MVC
+│   │   │   │   ├── AlunoController.java
+│   │   │   │   ├── AssuntoController.java
+│   │   │   │   ├── ColegiadoController.java
+│   │   │   │   ├── ProcessoAlunoController.java
+│   │   │   │   ├── ProcessoProfessorController.java
+│   │   │   │   ├── ProcessoCoordenadorController.java
+│   │   │   │   └── ProfessorController.java
 │   │   │   ├── model/           # Entidades e modelos de dados
 │   │   │   │   ├── Aluno.java
 │   │   │   │   ├── Assunto.java
@@ -54,9 +61,8 @@ delibera_consilium/
 │   │       ├── static/          # Arquivos CSS, JS, imagens 
 │   │       └── templates/       # Templates HTML (Thymeleaf) 
 │   └── test/
-│       └── java/br/edu/ifpb/pweb2/delibera_consilium/
-│           └── DeliberaConsiliumApplicationTests.java
-├── pom.xml
+│       └── java/               # Testes unitários e de integração
+├── pom.xml                      # Arquivo de configuração Maven
 └── README.md
 ```
 
@@ -68,6 +74,18 @@ O projeto segue a arquitetura em camadas:
 - **Service**: Contém a lógica de negócio da aplicação
 - **Repository**: Gerencia a persistência de dados no banco de dados
 - **Model**: Define as entidades e estruturas de dados
+
+## 🧭 Controladores (controller)
+
+Breve lista dos controllers do projeto e sua responsabilidade principal (sem detalhar rotas):
+
+- `AlunoController.java` — gerencia operações administrativas relacionadas a alunos (CRUD, formulários).
+- `ProfessorController.java` — gerencia operações administrativas relacionadas a professores (CRUD, formulários).
+- `AssuntoController.java` — gerencia assuntos/pautas usados em processos.
+- `ColegiadoController.java` — gerencia colegiados e associação de professores como membros.
+- `ProcessoAlunoController.java` — funcionalidades para alunos criarem/visualizarem seus processos.
+- `ProcessoProfessorController.java` — visão e ações relacionadas a processos atribuídos a um professor (relator).
+- `ProcessoCoordenadorController.java` — visão do coordenador para listar e distribuir processos entre professores.
 
 ## 🧭 Entidades principais (model)
 
