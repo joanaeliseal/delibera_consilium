@@ -4,6 +4,8 @@ import br.edu.ifpb.pweb2.delibera_consilium.validator.Matricula;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.ToString;
+
 import java.util.List;
 
 @Data
@@ -19,6 +21,7 @@ public class Aluno {
 
     @NotBlank(message = "Campo obrigatório")
     @Matricula(message = "Matrícula deve conter apenas números (mínimo 8 dígitos)")
+    @Column(unique = true)
     private String matricula;
 
     
@@ -29,5 +32,6 @@ public class Aluno {
 
     // Relacionamento inverso: Um aluno tem vários processos
     @OneToMany(mappedBy = "interessado")
+    @ToString.Exclude
     private List<Processo> processos;
 }
