@@ -42,6 +42,10 @@ public class ProcessoService {
         return processoRepository.findByInteressado(aluno);
     }
 
+    public List<Processo> listarComFiltros(String status, Long alunoId, Long relatorId) {
+        return processoRepository.findByFiltros(status, alunoId, relatorId);
+    }
+
     // Logica pra criar um processo
     public Processo salvar(Processo processo) {
         // Se for um processo novo (que nao tem ID), define data e status inicial
