@@ -1,6 +1,8 @@
 package br.edu.ifpb.pweb2.delibera_consilium.model;
 
+import br.edu.ifpb.pweb2.delibera_consilium.validator.Matricula;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import java.util.List;
 
@@ -11,10 +13,18 @@ public class Aluno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Nome é obrigatório")
     private String nome;
     private String fone;
+
+    @NotBlank(message = "Campo obrigatório")
+    @Matricula(message = "Matrícula deve conter apenas números (mínimo 8 dígitos)")
     private String matricula;
+
+    
+    @NotBlank(message = "Login é obrigatório")
     private String login;
+
     private String senha;
 
     // Relacionamento inverso: Um aluno tem vários processos
