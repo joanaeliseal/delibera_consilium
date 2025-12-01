@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.delibera_consilium.service;
 
+import br.edu.ifpb.pweb2.delibera_consilium.model.Aluno;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Processo;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.ProcessoRepository;
@@ -30,6 +31,19 @@ public class ProcessoService {
 
     public Processo buscarPorId(Long id) {
         return processoRepository.findById(id).orElse(null);
+    }
+
+    public List<Processo> listarPorInteressado(Aluno aluno, String statusFiltro) {
+        // Se tem status e não ta vazio, filtra
+        if (statusFiltro != null && !statusFiltro.isEmpty()) {
+            return processoRepository.findByInteressadoAndStatus(aluno, statusFiltro);
+        }
+        // Se não tem filtro, retorna todos desse aluno
+        return processoRepository.findByInteressado(aluno);
+    }
+
+    public List<Processo> listarComFiltros(String status, Long alunoId, Long relatorId) {
+        return processoRepository.findByFiltros(status, alunoId, relatorId);
     }
 
     // Logica pra criar um processo
