@@ -69,6 +69,41 @@ O projeto segue a arquitetura em camadas:
 - **Repository**: Gerencia a persistência de dados no banco de dados
 - **Model**: Define as entidades e estruturas de dados
 
+## 🧭 Entidades principais (model)
+
+- `Aluno.java`: representa um aluno com dados pessoais e matrícula.
+- `Professor.java`: representa um professor que participa das reuniões e processos.
+- `Colegiado.java`: representa o colegiado (conselho) que delibera sobre processos.
+- `Assunto.java`: tópico ou pauta que pode compor uma reunião ou processo.
+- `Processo.java`: registro de um processo submetido ao colegiado para deliberação.
+- `Reuniao.java`: representa uma reunião do colegiado, com data, pauta e participantes.
+- `StatusReuniao.java`: enum com os estados possíveis de uma reunião (por exemplo: AGENDADA, REALIZADA, CANCELADA).
+- `TipoDecisao.java`: enum que descreve tipos de decisão adotados pelo colegiado.
+- `TipoVoto.java`: enum com tipos de voto possíveis (por exemplo: FAVOR, CONTRA, ABSTENCAO).
+- `Voto.java`: representa o voto de um participante em um processo ou item de pauta.
+
+## 📦 Repositórios (repository)
+
+As interfaces em `repository/` são responsáveis pela persistência dos dados e, normalmente, estendem `JpaRepository` ou outra interface do Spring Data. Arquivos atuais:
+
+- `AlunoRepository.java`
+- `ProfessorRepository.java`
+- `ColegiadoRepository.java`
+- `AssuntoRepository.java`
+- `ProcessoRepository.java`
+- `ReuniaoRepository.java`
+- `VotoRepository.java`
+
+## 🛠️ Serviços (service)
+
+As classes em `service/` encapsulam a lógica de negócio e orquestram chamadas aos repositórios. Elas são usadas pelos controllers para manter a aplicação organizada e testável. Serviços atuais:
+
+- `AlunoService.java`
+- `ProfessorService.java`
+- `ColegiadoService.java`
+- `AssuntoService.java`
+- `ProcessoService.java`
+
 ## 🔧 Configuração e Execução
 
 ### Pré-requisitos
