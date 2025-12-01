@@ -5,6 +5,7 @@ import br.edu.ifpb.pweb2.delibera_consilium.model.Processo;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Aluno;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
@@ -22,4 +23,11 @@ public interface ProcessoRepository extends JpaRepository<Processo, Long> {
     
     // REQFUNC 7: Coordenador filtra por status (ex: "CRIADO", "DISTRIBUIDO")
     List<Processo> findByStatus(String status);
+
+    // REQFUNC 7
+    @Query("SELECT p FROM Processo p WHERE " +
+        "(:status IS NULL OR p.status = :status) AND " +
+        "(:alunoId IS NULL OR p.interessado.id = :alunoId) AND " +
+        "(:relatorId IS NULL OR p.relator.id = :relatorId)")
+    List<Processo> findByFiltros(String status, Long alunoId, Long relatorId);
 }
