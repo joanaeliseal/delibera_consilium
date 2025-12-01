@@ -51,7 +51,7 @@ public class AlunoController {
         return "admin/aluno/form";
     }
 
-    @GetMapping("/excluir/{id}")
+    @PostMapping("/excluir/{id}")
     public String excluir(@PathVariable Long id, RedirectAttributes redirect) {
         service.excluir(id);
         redirect.addFlashAttribute("msg", "Aluno excluído!");
