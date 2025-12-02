@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Novo Processo</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/aluno/processos/salvar}" th:object="${processo}" method="post">
+
+                        <input type="hidden" name="alunoId" th:value="${alunoId}" />
+
+                        <input type="hidden" th:field="*{id}" />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Número do Protocolo / Descrição</label>
+                            <input type="text" class="form-control" th:field="*{numero}" placeholder="Ex: 2025-REQ-001" th:errorclass="is-invalid" />
+                            <div class="invalid-feedback" th:errors="*{numero}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Assunto</label>
+                            <select class="form-select" th:field="*{assunto}" th:errorclass="is-invalid">
+                                <option value="">Selecione um assunto...</option>
+                                <option th:each="a : ${assuntos}" th:value="${a.id}" th:text="${a.nome}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{assunto}"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <a th:href="@{/aluno/processos}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-success">Abrir Processo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

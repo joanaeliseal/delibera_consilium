@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="mb-3">
+        <h2>Painel do Coordenador</h2>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-light fw-bold">Filtrar Processos</div>
+        <div class="card-body">
+            <form th:action="@{/coord/processos}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="CRIADO" th:selected="${param.status != null && param.status[0] == 'CRIADO'}">Criado</option>
+                        <option value="DISTRIBUIDO" th:selected="${param.status != null && param.status[0] == 'DISTRIBUIDO'}">Distribuído</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Aluno Interessado</label>
+                    <select name="alunoId" class="form-select">
+                        <option value="">Todos</option>
+                        <option th:each="a : ${alunos}" th:value="${a.id}" th:text="${a.nome}" 
+                                th:selected="${param.alunoId != null && param.alunoId[0] == a.id.toString()}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Relator Atual</label>
+                    <select name="relatorId" class="form-select">
+                        <option value="">Todos</option>
+                        <option th:each="r : ${professores}" th:value="${r.id}" th:text="${r.nome}"
+                                th:selected="${param.relatorId != null && param.relatorId[0] == r.id.toString()}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 me-2">Filtrar</button>
+                    <a th:href="@{/coord/processos}" class="btn btn-outline-secondary">Limpar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="table-primary">
+                <tr>
+                    <th>Protocolo</th>
+                    <th>Aluno</th>
+                    <th>Assunto</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th style="width: 35%;">Distribuição (Relator)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${processos}">
+                    <td th:text="${p.numero}"></td>
+                    <td th:text="${p.interessado?.nome}"></td>
+                    <td th:text="${p.assunto?.nome}"></td>
+                    <td th:text="${#temporals.format(p.dataRecepcao, 'dd/MM/yyyy')}"></td>
+                    <td>
+                         <span th:class="${'badge ' + (p.status == 'CRIADO' ? 'bg-secondary' : 'bg-warning text-dark')}" 
+                               th:text="${p.status}"></span>
+                    </td>
+                    
+                    <td>
+                        <div th:if="${p.relator != null}" class="text-success fw-bold">
+                            <i class="bi bi-check-circle"></i> <span th:text="${p.relator.nome}"></span>
+                        </div>
+
+                        <form th:action="@{/coord/processos/distribuir/{id}(id=${p.id})}" method="post" class="d-flex mt-1">
+                            <select name="professorId" class="form-select form-select-sm me-2" required>
+                                <option value="">Selecione Relator...</option>
+                                <option th:each="prof : ${professores}" th:value="${prof.id}" th:text="${prof.nome}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
