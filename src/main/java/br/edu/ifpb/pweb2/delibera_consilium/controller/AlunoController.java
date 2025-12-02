@@ -35,6 +35,14 @@ public class AlunoController {
     public String salvar(@Valid @ModelAttribute("aluno") Aluno aluno,
                          BindingResult result,
                          RedirectAttributes redirect) {
+       
+        // busca no banco se já tem alguém com essa matrícula
+        Aluno alunoExistente = service.buscarPorMatricula(aluno.getMatricula());
+
+        // se encontrou alguem e nao sou eu mesmo (pros casos de editar)
+        if (alunoExistente != null && !alunoExistente.getId().equals(aluno.getId())) {
+            result.rejectValue("matricula", "error.matricula", "Esta matrícula já está cadastrada para outro aluno.");
+        }
 
         if (result.hasErrors()) {
             return "admin/aluno/form";
