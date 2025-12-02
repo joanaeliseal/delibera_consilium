@@ -24,7 +24,7 @@ public class ProcessoService {
         return processoRepository.findAll();
     }
     
-    // Filtro pro professor ver os dele (REQFUNC 3)
+    // filtro pro professor ver os dele (REQFUNC 3)
     public List<Processo> listarPorRelator(Professor relator) {
         return processoRepository.findByRelator(relator);
     }
@@ -34,21 +34,26 @@ public class ProcessoService {
     }
 
     public List<Processo> listarPorInteressado(Aluno aluno, String statusFiltro) {
-        // Se tem status e não ta vazio, filtra
+        // se tem status e não ta vazio, filtra
         if (statusFiltro != null && !statusFiltro.isEmpty()) {
             return processoRepository.findByInteressadoAndStatus(aluno, statusFiltro);
         }
-        // Se não tem filtro, retorna todos desse aluno
+        // se não tem filtro retorna todos desse aluno
         return processoRepository.findByInteressado(aluno);
     }
 
     public List<Processo> listarComFiltros(String status, Long alunoId, Long relatorId) {
+
+        if (status != null && status.isEmpty()) {
+            status = null;
+        }
+        
         return processoRepository.findByFiltros(status, alunoId, relatorId);
     }
 
-    // Logica pra criar um processo
+    // logica pra criar um processo
     public Processo salvar(Processo processo) {
-        // Se for um processo novo (que nao tem ID), define data e status inicial
+        // se for um processo novo (que nao tem id), define data e status inicial
         if (processo.getId() == null) {
             processo.setDataRecepcao(LocalDate.now());
             processo.setStatus("CRIADO");
@@ -56,7 +61,7 @@ public class ProcessoService {
         return processoRepository.save(processo);
     }
 
-    // Lógica pra distribuir processo (REQFUNC 8)
+    // logica pra distribuir processo (REQFUNC 8)
     public void distribuirProcesso(Long idProcesso, Long idRelator) {
         Processo processo = this.buscarPorId(idProcesso);
         Professor relator = professorRepository.findById(idRelator).orElse(null);
