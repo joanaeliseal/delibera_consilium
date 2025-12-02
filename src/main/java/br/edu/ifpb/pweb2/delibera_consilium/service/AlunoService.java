@@ -16,10 +16,6 @@ public class AlunoService {
         return alunoRepository.findAll();
     }
 
-    public Aluno buscarPorMatricula(String matricula) {
-        return alunoRepository.findByMatricula(matricula);
-    }
-
     public Aluno buscarPorId(Long id) {
         return alunoRepository.findById(id).orElse(null);
     }
