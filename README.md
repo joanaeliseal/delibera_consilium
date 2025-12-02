@@ -22,16 +22,15 @@ delibera_consilium/
 ├── src/
 │   ├── main/
 │   │   ├── java/br/edu/ifpb/pweb2/delibera_consilium/
-│   │   │   ├── DeliberaConsiliumApplication.java
-│   │   │   ├── controller/ # Controladores REST/MVC
+│   │   │   ├── controller/      # Controladores REST/MVC
 │   │   │   │   ├── AlunoController.java
 │   │   │   │   ├── AssuntoController.java
 │   │   │   │   ├── ColegiadoController.java
 │   │   │   │   ├── ProcessoAlunoController.java
-│   │   │   │   ├── ProcessoCoordenadorController.java
 │   │   │   │   ├── ProcessoProfessorController.java
+│   │   │   │   ├── ProcessoCoordenadorController.java
 │   │   │   │   └── ProfessorController.java
-│   │   │   ├── model/ # Entidades e modelos de dados
+│   │   │   ├── model/           # Entidades e modelos de dados
 │   │   │   │   ├── Aluno.java
 │   │   │   │   ├── Assunto.java
 │   │   │   │   ├── Colegiado.java
@@ -42,7 +41,7 @@ delibera_consilium/
 │   │   │   │   ├── TipoDecisao.java
 │   │   │   │   ├── TipoVoto.java
 │   │   │   │   └── Voto.java
-│   │   │   ├── repository/  # Camada de acesso a dados
+│   │   │   ├── repository/      # Camada de acesso a dados
 │   │   │   │   ├── AlunoRepository.java
 │   │   │   │   ├── AssuntoRepository.java
 │   │   │   │   ├── ColegiadoRepository.java
@@ -50,23 +49,34 @@ delibera_consilium/
 │   │   │   │   ├── ProfessorRepository.java
 │   │   │   │   ├── ReuniaoRepository.java
 │   │   │   │   └── VotoRepository.java
-│   │   │   ├── service/  # Lógica de negócio
+│   │   │   ├── service/         # Lógica de negócio
 │   │   │   │   ├── AlunoService.java
 │   │   │   │   ├── AssuntoService.java
 │   │   │   │   ├── ColegiadoService.java
 │   │   │   │   ├── ProcessoService.java
 │   │   │   │   └── ProfessorService.java
-│   │   │   └── validator/ # Lógica de validação da matrícula
-│   │   │       ├── Matricula.java
-│   │   │       └── MatriculaValidator.java
+│   │   │   └── DeliberaConsiliumApplication.java
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       ├── static/ # Arquivos CSS, JS, imagens 
 │   │       └── templates/ # Templates HTML (Thymeleaf)
+│   │           ├── layout.html
+│   │           └── admin/
+│   │               ├── aluno/
+│   │               │   ├── form.html
+│   │               │   └── list.html
+│   │               ├── assunto/
+│   │               │   ├── form.html
+│   │               │   └── list.html
+│   │               ├── colegiado/
+│   │               │   ├── form.html
+│   │               │   └── list.html
+│   │               └── professor/
+│   │                   ├── form.html
+│   │                   └── list.html
 │   └── test/
-│       └── java/br/edu/ifpb/pweb2/delibera_consilium/
-│           └── DeliberaConsiliumApplicationTests.java
-├── pom.xml             # Arquivo de configuração Maven
+│       └── java/               # Testes unitários e de integração
+├── pom.xml                     # Arquivo de configuração Maven
 └── README.md
 ```
 

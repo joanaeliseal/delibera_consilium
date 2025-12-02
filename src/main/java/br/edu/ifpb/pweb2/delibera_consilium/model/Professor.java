@@ -2,6 +2,8 @@ package br.edu.ifpb.pweb2.delibera_consilium.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+
 import java.util.List;
 
 @Data
@@ -20,9 +22,11 @@ public class Professor {
 
     // Processos onde este professor é o Relator
     @OneToMany(mappedBy = "relator")
+    @ToString.Exclude
     private List<Processo> processosRelator;
 
     // Colegiados dos quais ele é membro
     @ManyToMany(mappedBy = "membros")
+    @ToString.Exclude
     private List<Colegiado> colegiados;
 }
