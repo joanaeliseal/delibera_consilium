@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="mb-3">
+        <h2>Painel do Relator</h2>
+        <p class="text-muted">Processos atribuídos a você para análise.</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-warning">
+                <tr>
+                    <th>Protocolo</th>
+                    <th>Aluno</th>
+                    <th>Assunto</th>
+                    <th>Data Distribuição</th>
+                    <th>Parecer</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${processos}">
+                    <td th:text="${p.numero}"></td>
+                    <td th:text="${p.interessado?.nome}"></td>
+                    <td th:text="${p.assunto?.nome}"></td>
+                    <td th:text="${#temporals.format(p.dataDistribuicao, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <span th:if="${p.parecer == null}" class="badge bg-danger">Pendente</span>
+                        <span th:if="${p.parecer != null}" class="badge bg-success">Enviado</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-dark" disabled>
+                            <i class="bi bi-file-earmark-text"></i> Emitir Parecer (Etapa 2)
+                        </button>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(processos)}">
+                    <td colspan="6" class="text-center text-muted py-3">Nenhum processo atribuído a você ainda.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
