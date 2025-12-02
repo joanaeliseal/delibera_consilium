@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Cadastro de Colegiado</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/colegiados/salvar}" th:object="${colegiado}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Nome do Curso</label>
+                            <input type="text" class="form-control" th:field="*{curso}" placeholder="Ex: Sistemas para Internet" th:errorclass="is-invalid" />
+                            <div class="invalid-feedback" th:errors="*{curso}"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data Início</label>
+                                <input type="date" class="form-control" th:field="*{dataInicio}" th:errorclass="is-invalid" />
+                                <div class="invalid-feedback" th:errors="*{dataInicio}"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data Fim</label>
+                                <input type="date" class="form-control" th:field="*{dataFim}" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Descrição</label>
+                                <input type="text" class="form-control" th:field="*{descricao}" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Portaria</label>
+                                <input type="text" class="form-control" th:field="*{portaria}" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Selecione os Membros do Colegiado:</label>
+                            <div class="card p-2" style="max-height: 200px; overflow-y: auto;">
+                                <div th:each="prof : ${professores}" class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                           th:field="*{membros}" 
+                                           th:value="${prof.id}" 
+                                           th:id="${'prof_' + prof.id}" />
+                                           
+                                    <label class="form-check-label" th:for="${'prof_' + prof.id}" 
+                                           th:text="|${prof.nome} (${prof.matricula})|">
+                                        Nome Professor
+                                    </label>
+                                </div>
+                            </div>
+                            <small class="text-muted">Marque os professores que compõem este colegiado.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <a th:href="@{/admin/colegiados}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-success">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -63,6 +63,20 @@ delibera_consilium/
 │   │       ├── application.properties
 │   │       ├── static/ # Arquivos CSS, JS, imagens 
 │   │       └── templates/ # Templates HTML (Thymeleaf)
+│   │           ├── layout.html
+│   │           └── admin/
+│   │               ├── aluno/
+│   │               │   ├── form.html
+│   │               │   └── list.html
+│   │               ├── assunto/
+│   │               │   ├── form.html
+│   │               │   └── list.html
+│   │               ├── colegiado/
+│   │               │   ├── form.html
+│   │               │   └── list.html
+│   │               └── professor/
+│   │                   ├── form.html
+│   │                   └── list.html
 │   └── test/
 │       └── java/br/edu/ifpb/pweb2/delibera_consilium/
 │           └── DeliberaConsiliumApplicationTests.java
