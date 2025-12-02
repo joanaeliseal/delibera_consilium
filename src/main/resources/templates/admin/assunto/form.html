@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<head></head>
+<body>
+
+<section>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0" th:text="${assunto.id == null ? 'Novo Assunto' : 'Editar Assunto'}">Formulário</h4>
+                </div>
+                <div class="card-body">
+                    
+                    <form th:action="@{/admin/assuntos/salvar}" th:object="${assunto}" method="post">
+                        
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome do Assunto</label>
+                            <input type="text" class="form-control" id="nome" th:field="*{nome}" 
+                                   th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'">
+                            
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}">
+                                Erro no nome
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/admin/assuntos}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-lg"></i> Salvar
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
