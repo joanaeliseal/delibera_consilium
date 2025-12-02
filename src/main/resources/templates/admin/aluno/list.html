@@ -12,6 +12,7 @@
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
                 <tr>
+                    <th>ID</th>
                     <th>Matrícula</th>
                     <th>Nome</th>
                     <th>Telefone</th>
@@ -21,6 +22,8 @@
                 </thead>
                 <tbody>
                 <tr th:each="aluno : ${alunos}">
+                    <td th:text="${aluno.id}" class="fw-bold">1</td>
+                    
                     <td th:text="${aluno.matricula}">2023133</td>
                     <td th:text="${aluno.nome}">João Silva</td>
                     <td th:text="${aluno.fone}">(83) 9999-9999</td>
