@@ -20,6 +20,10 @@ public class AlunoService {
         return alunoRepository.findById(id).orElse(null);
     }
 
+    public Aluno buscarPorMatricula(String matricula) {
+        return alunoRepository.findByMatricula(matricula);
+    }
+
     public Aluno salvar(Aluno aluno) {
         return alunoRepository.save(aluno);
     }
