@@ -52,9 +52,13 @@ public class AssuntoController {
     }
 
     @PostMapping("/excluir/{id}")
-    public String excluir(@PathVariable Long id, RedirectAttributes redirect) {
-        service.excluir(id);
-        redirect.addFlashAttribute("msg", "Assunto removido!");
+    public String excluir(@PathVariable("id") Long id, RedirectAttributes redirect) {
+        try {
+            service.excluir(id);
+            redirect.addFlashAttribute("msg", "Assunto excluído com sucesso!");
+        } catch (Exception e) {
+            redirect.addFlashAttribute("errorMsg", "Erro: Este assunto está sendo usado em processos cadastrados.");
+        }
         return "redirect:/admin/assuntos";
     }
 }

@@ -60,9 +60,13 @@ public class AlunoController {
     }
 
     @PostMapping("/excluir/{id}")
-    public String excluir(@PathVariable Long id, RedirectAttributes redirect) {
-        service.excluir(id);
-        redirect.addFlashAttribute("msg", "Aluno excluído!");
+    public String excluir(@PathVariable("id") Long id, RedirectAttributes redirect) {
+        try {
+            service.excluir(id);
+            redirect.addFlashAttribute("msg", "Aluno excluído com sucesso!");
+        } catch (Exception e) {
+            redirect.addFlashAttribute("errorMsg", "Não é possível excluir este aluno pois existem processos vinculados a ele.");
+        }
         return "redirect:/admin/alunos";
     }
 }

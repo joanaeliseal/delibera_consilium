@@ -59,9 +59,13 @@ public class ColegiadoController {
     }
 
     @PostMapping("/excluir/{id}")
-    public String excluir(@PathVariable Long id, RedirectAttributes redirect) {
-        service.excluir(id);
-        redirect.addFlashAttribute("msg", "Colegiado excluído!");
+    public String excluir(@PathVariable("id") Long id, RedirectAttributes redirect) {
+        try {
+            service.excluir(id);
+            redirect.addFlashAttribute("msg", "Colegiado excluído com sucesso!");
+        } catch (Exception e) {
+            redirect.addFlashAttribute("errorMsg", "Erro: Não é possível excluir um colegiado que já possui reuniões registradas.");
+        }
         return "redirect:/admin/colegiados";
     }
 }
