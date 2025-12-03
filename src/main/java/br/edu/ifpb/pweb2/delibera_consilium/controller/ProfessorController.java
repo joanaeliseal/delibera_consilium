@@ -52,9 +52,13 @@ public class ProfessorController {
     }
 
     @PostMapping("/excluir/{id}")
-    public String excluir(@PathVariable Long id, RedirectAttributes redirect) {
-        service.excluir(id);
-        redirect.addFlashAttribute("msg", "Professor excluído!");
+    public String excluir(@PathVariable("id") Long id, RedirectAttributes redirect) {
+        try {
+            service.excluir(id);
+            redirect.addFlashAttribute("msg", "Professor excluído com sucesso!");
+        } catch (Exception e) {
+            redirect.addFlashAttribute("errorMsg", "Erro: Este professor está vinculado a processos ou colegiados e não pode ser excluído.");
+        }
         return "redirect:/admin/professores";
     }
 }
