@@ -4,7 +4,11 @@
 <section>
     <div class="mb-3">
         <h2>Painel do Relator</h2>
-        <p class="text-muted">Processos atribuídos a você para análise.</p>
+        
+        <p class="text-muted" th:if="${professorLogado}">
+            Logado como: <strong th:text="${professorLogado.nome}"></strong> (ID: <span th:text="${professorLogado.id}"></span>)
+        </p>
+        <p class="text-muted" th:unless="${professorLogado}">Processos atribuídos a você para análise.</p>
     </div>
 
     <div class="card shadow-sm">
@@ -15,6 +19,7 @@
                     <th>Protocolo</th>
                     <th>Aluno</th>
                     <th>Assunto</th>
+                    <th class="text-center">Requerimento</th>
                     <th>Data Distribuição</th>
                     <th>Parecer</th>
                     <th>Ações</th>
@@ -25,6 +30,38 @@
                     <td th:text="${p.numero}"></td>
                     <td th:text="${p.interessado?.nome}"></td>
                     <td th:text="${p.assunto?.nome}"></td>
+                    
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-info text-white" 
+                                data-bs-toggle="modal" 
+                                th:data-bs-target="'#modalReq' + ${p.id}">
+                            <i class="bi bi-eye"></i> Ler
+                        </button>
+
+                        <div class="modal fade" th:id="'modalReq' + ${p.id}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Análise do Requerimento</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body text-start">
+                                        <p><strong>Aluno:</strong> <span th:text="${p.interessado?.nome}"></span></p>
+                                        <p><strong>Assunto:</strong> <span th:text="${p.assunto?.nome}"></span></p>
+                                        <hr>
+                                        <p class="fw-bold">Texto do Requerimento:</p>
+                                        <div class="p-3 bg-light border rounded">
+                                            <p class="mb-0" th:text="${p.textoRequerimento}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
                     <td th:text="${#temporals.format(p.dataDistribuicao, 'dd/MM/yyyy')}"></td>
                     <td>
                         <span th:if="${p.parecer == null}" class="badge bg-danger">Pendente</span>
@@ -32,12 +69,12 @@
                     </td>
                     <td>
                         <button class="btn btn-sm btn-outline-dark" disabled>
-                            <i class="bi bi-file-earmark-text"></i> Emitir Parecer (Etapa 2)
+                            <i class="bi bi-file-earmark-text"></i> Emitir Parecer
                         </button>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(processos)}">
-                    <td colspan="6" class="text-center text-muted py-3">Nenhum processo atribuído a você ainda.</td>
+                    <td colspan="7" class="text-center text-muted py-3">Nenhum processo atribuído a você ainda.</td>
                 </tr>
                 </tbody>
             </table>
