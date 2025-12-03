@@ -3,8 +3,8 @@
 <body>
 <section>
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Gerenciar Alunos</h2>
-        <a th:href="@{/admin/alunos/novo}" class="btn btn-primary"><i class="bi bi-person-plus-fill"></i> Novo Aluno</a>
+        <h2>Gerenciar Professores</h2>
+        <a th:href="@{/admin/professores/novo}" class="btn btn-primary"><i class="bi bi-person-plus"></i> Novo Professor</a>
     </div>
 
     <div class="card shadow-sm">
@@ -13,29 +13,26 @@
                 <thead class="table-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Matrícula</th>
                     <th>Nome</th>
-                    <th>Telefone</th>
-                    <th>Login</th>
+                    <th>Matrícula</th>
+                    <th>Coordenador?</th>
                     <th class="text-end">Ações</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="aluno : ${alunos}">
-                    <td th:text="${aluno.id}" class="fw-bold">1</td>
-                    
-                    <td th:text="${aluno.matricula}">2023133</td>
-                    <td th:text="${aluno.nome}">João Silva</td>
-                    <td th:text="${aluno.fone}">(83) 9999-9999</td>
-                    <td th:text="${aluno.login}">joao.silva</td>
+                <tr th:each="prof : ${professores}">
+                    <td th:text="${prof.id}" class="fw-bold">1</td>
+
+                    <td th:text="${prof.nome}">Fred</td>
+                    <td th:text="${prof.matricula}">12345</td>
+                    <td>
+                        <span th:if="${prof.coordenador}" class="badge bg-success">SIM</span>
+                        <span th:unless="${prof.coordenador}" class="badge bg-secondary">NÃO</span>
+                    </td>
                     <td class="text-end">
-                        <a th:href="@{/admin/alunos/editar/{id}(id=${aluno.id})}" class="btn btn-sm btn-outline-secondary me-1">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <form th:action="@{/admin/alunos/excluir/{id}(id=${aluno.id})}" method="post" style="display: inline;">
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="if(confirm('Excluir este aluno?')) this.form.submit();">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                        <a th:href="@{/admin/professores/editar/{id}(id=${prof.id})}" class="btn btn-sm btn-outline-secondary me-1"><i class="bi bi-pencil"></i></a>
+                        <form th:action="@{/admin/professores/excluir/{id}(id=${prof.id})}" method="post" style="display: inline;">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="if(confirm('Excluir este professor?')) this.form.submit();"><i class="bi bi-trash"></i></button>
                         </form>
                     </td>
                 </tr>
