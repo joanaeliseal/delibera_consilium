@@ -48,10 +48,15 @@ public class ProcessoService {
 
     // Logica pra criar um processo
     public Processo salvar(Processo processo) {
-        // Se for um processo novo (que nao tem ID), define data e status inicial
+        // se for um processo novo (com id nulo)
         if (processo.getId() == null) {
             processo.setDataRecepcao(LocalDate.now());
             processo.setStatus("CRIADO");
+            
+            // gerador de protocolo (gera protocolo como: 20250520-1A2B)
+            String ano = String.valueOf(LocalDate.now().getYear());
+            String codigoAleatorio = java.util.UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+            processo.setNumero(ano + "-" + codigoAleatorio);
         }
         return processoRepository.save(processo);
     }
