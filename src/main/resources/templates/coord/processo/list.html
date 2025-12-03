@@ -50,9 +50,10 @@
                     <th>Protocolo</th>
                     <th>Aluno</th>
                     <th>Assunto</th>
+                    <th class="text-center">Requerimento</th>
                     <th>Data</th>
                     <th>Status</th>
-                    <th style="width: 35%;">Distribuição (Relator)</th>
+                    <th style="width: 30%;">Distribuição</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -60,6 +61,38 @@
                     <td th:text="${p.numero}"></td>
                     <td th:text="${p.interessado?.nome}"></td>
                     <td th:text="${p.assunto?.nome}"></td>
+                    
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-primary text-white" 
+                                data-bs-toggle="modal" 
+                                th:data-bs-target="'#modalReq' + ${p.id}">
+                            <i class="bi bi-eye"></i> Ler
+                        </button>
+                        
+                        <div class="modal fade" th:id="'modalReq' + ${p.id}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Detalhes do Requerimento</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body text-start">
+                                        <p><strong>Aluno:</strong> <span th:text="${p.interessado?.nome}"></span></p>
+                                        <p><strong>Assunto:</strong> <span th:text="${p.assunto?.nome}"></span></p>
+                                        <hr>
+                                        <p class="fw-bold">Texto do Aluno:</p>
+                                        <div class="p-3 bg-light border rounded">
+                                            <p class="mb-0" th:text="${p.textoRequerimento}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
                     <td th:text="${#temporals.format(p.dataRecepcao, 'dd/MM/yyyy')}"></td>
                     <td>
                          <span th:class="${'badge ' + (p.status == 'CRIADO' ? 'bg-secondary' : 'bg-warning text-dark')}" 
