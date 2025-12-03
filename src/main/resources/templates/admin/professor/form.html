@@ -14,33 +14,36 @@
 
                         <div class="mb-3">
                             <label class="form-label">Nome Completo</label>
-                            <input type="text" class="form-control" th:field="*{nome}" th:errorclass="is-invalid">
+                            <input type="text" class="form-control" th:field="*{nome}" th:errorclass="is-invalid" />
                             <div class="invalid-feedback" th:errors="*{nome}"></div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Matrícula</label>
-                                <input type="text" class="form-control" th:field="*{matricula}">
+                                <input type="text" class="form-control" th:field="*{matricula}" th:errorclass="is-invalid" />
+                                <div class="invalid-feedback" th:errors="*{matricula}"></div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Telefone</label>
-                                <input type="text" class="form-control" th:field="*{fone}">
+                                <input type="text" class="form-control" th:field="*{fone}" />
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Login</label>
-                                <input type="text" class="form-control" th:field="*{login}">
+                                <input type="text" class="form-control" th:field="*{login}" th:errorclass="is-invalid" />
+                                <div class="invalid-feedback" th:errors="*{login}"></div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Senha</label>
-                                <input type="password" class="form-control" th:field="*{senha}">
+                                <input type="password" class="form-control" th:field="*{senha}" th:errorclass="is-invalid" />
+                                <div class="invalid-feedback" th:errors="*{senha}"></div>
                             </div>
                             <div class="col-md-4 mb-3 d-flex align-items-center">
                                 <div class="form-check mt-4">
-                                    <input class="form-check-input" type="checkbox" th:field="*{coordenador}" id="coordCheck">
+                                    <input class="form-check-input" type="checkbox" th:field="*{coordenador}" id="coordCheck" />
                                     <label class="form-check-label fw-bold" for="coordCheck">É Coordenador?</label>
                                 </div>
                             </div>

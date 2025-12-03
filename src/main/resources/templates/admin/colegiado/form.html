@@ -24,26 +24,35 @@
                                 <input type="date" class="form-control" th:field="*{dataInicio}" th:errorclass="is-invalid" />
                                 <div class="invalid-feedback" th:errors="*{dataInicio}"></div>
                             </div>
+                            
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Data Fim</label>
-                                <input type="date" class="form-control" th:field="*{dataFim}" />
+                                <input type="date" class="form-control" th:field="*{dataFim}" th:errorclass="is-invalid" />
+                                <div class="invalid-feedback" th:errors="*{dataFim}"></div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Descrição</label>
-                                <input type="text" class="form-control" th:field="*{descricao}" />
+                                <input type="text" class="form-control" th:field="*{descricao}" th:errorclass="is-invalid" />
+                                <div class="invalid-feedback" th:errors="*{descricao}"></div>
                             </div>
+                            
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Portaria</label>
-                                <input type="text" class="form-control" th:field="*{portaria}" />
+                                <input type="text" class="form-control" th:field="*{portaria}" th:errorclass="is-invalid" />
+                                <div class="invalid-feedback" th:errors="*{portaria}"></div>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Selecione os Membros do Colegiado:</label>
-                            <div class="card p-2" style="max-height: 200px; overflow-y: auto;">
+                            
+                            <div class="card p-2" 
+                                 th:classappend="${#fields.hasErrors('membros')} ? 'border-danger'"
+                                 style="max-height: 200px; overflow-y: auto;">
+                                
                                 <div th:each="prof : ${professores}" class="form-check">
                                     <input class="form-check-input" type="checkbox" 
                                            th:field="*{membros}" 
@@ -56,7 +65,10 @@
                                     </label>
                                 </div>
                             </div>
-                            <small class="text-muted">Marque os professores que compõem este colegiado.</small>
+                            
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('membros')}" th:errors="*{membros}"></div>
+                            
+                            <small class="text-muted" th:unless="${#fields.hasErrors('membros')}">Marque os professores que compõem este colegiado.</small>
                         </div>
 
                         <div class="d-flex justify-content-end">
