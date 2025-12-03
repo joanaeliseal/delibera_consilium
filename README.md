@@ -64,18 +64,28 @@ delibera_consilium/
 │   │       ├── static/ # Arquivos CSS, JS, imagens 
 │   │       └── templates/ # Templates HTML (Thymeleaf)
 │   │           ├── layout.html
-│   │           └── admin/
-│   │               ├── aluno/
-│   │               │   ├── form.html
-│   │               │   └── list.html
-│   │               ├── assunto/
-│   │               │   ├── form.html
-│   │               │   └── list.html
-│   │               ├── colegiado/
-│   │               │   ├── form.html
-│   │               │   └── list.html
-│   │               └── professor/
-│   │                   ├── form.html
+│   │           ├── admin/
+│   │           │   ├── aluno/
+│   │           │   │   ├── form.html
+│   │           │   │   └── list.html
+│   │           │   ├── assunto/
+│   │           │   │   ├── form.html
+│   │           │   │   └── list.html
+│   │           │   ├── colegiado/
+│   │           │   │   ├── form.html
+│   │           │   │   └── list.html
+│   │           │   └── professor/
+│   │           │       ├── form.html
+│   │           │       └── list.html
+│   │           ├── aluno/
+│   │           │   └── processo/
+│   │           │       ├── form.html
+│   │           │       └── list.html
+│   │           ├── coord/
+│   │           │   └── processo/
+│   │           │       └── list.html
+│   │           └── professor/
+│   │               └── processo/
 │   │                   └── list.html
 │   └── test/
 │       └── java/br/edu/ifpb/pweb2/delibera_consilium/
