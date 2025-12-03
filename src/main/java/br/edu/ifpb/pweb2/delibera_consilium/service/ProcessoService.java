@@ -6,6 +6,7 @@ import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.ProcessoRepository;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -33,13 +34,15 @@ public class ProcessoService {
         return processoRepository.findById(id).orElse(null);
     }
 
-    public List<Processo> listarPorInteressado(Aluno aluno, String statusFiltro) {
-        // se tem status e não ta vazio, filtra
-        if (statusFiltro != null && !statusFiltro.isEmpty()) {
-            return processoRepository.findByInteressadoAndStatus(aluno, statusFiltro);
+    public List<Processo> listarPorInteressado(Aluno aluno, String status, Long assuntoId, String ordem) {
+        if (status != null && status.isEmpty()) status = null;
+
+        Sort sort = Sort.by("dataRecepcao").descending(); 
+        if ("asc".equals(ordem)) {
+            sort = Sort.by("dataRecepcao").ascending();
         }
-        // se não tem filtro retorna todos desse aluno
-        return processoRepository.findByInteressado(aluno);
+
+        return processoRepository.findByAlunoFiltros(aluno, status, assuntoId, sort);
     }
 
     public List<Processo> listarComFiltros(String status, Long alunoId, Long relatorId) {

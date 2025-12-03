@@ -28,16 +28,18 @@ public class ProcessoAlunoController {
 
     @GetMapping
     public String listar(@RequestParam(value = "status", required = false) String status,
-                         @RequestParam(value = "alunoId", required = false, defaultValue = "1") Long alunoId,
+                         @RequestParam(value = "assuntoId", required = false) Long assuntoId,
+                         @RequestParam(value = "ordem", required = false) String ordem,
+                         @RequestParam(value = "alunoId", required = false, defaultValue = "1") Long alunoId, 
                          Model model) {
         
-        // busca o aluno pelo ID da URL ( 1 se não passar nada)
         Aluno alunoLogado = alunoService.buscarPorId(alunoId);
 
         if (alunoLogado != null) {
-            // lista os processos desse aluno 
-            model.addAttribute("processos", processoService.listarPorInteressado(alunoLogado, status));
-            model.addAttribute("alunoId", alunoId); 
+            model.addAttribute("processos", processoService.listarPorInteressado(alunoLogado, status, assuntoId, ordem));
+            
+            model.addAttribute("alunoId", alunoId);
+            model.addAttribute("assuntos", assuntoService.listarTodos()); 
         }
         
         return "aluno/processo/list";

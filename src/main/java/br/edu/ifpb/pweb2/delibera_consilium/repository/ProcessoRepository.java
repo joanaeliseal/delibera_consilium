@@ -30,4 +30,11 @@ public interface ProcessoRepository extends JpaRepository<Processo, Long> {
         "(:alunoId IS NULL OR p.interessado.id = :alunoId) AND " +
         "(:relatorId IS NULL OR p.relator.id = :relatorId)")
     List<Processo> findByFiltros(String status, Long alunoId, Long relatorId);
+
+    // REQFUNC 2
+    @Query("SELECT p FROM Processo p WHERE " +
+           "p.interessado = :aluno AND " +
+           "(:status IS NULL OR p.status = :status) AND " +
+           "(:assuntoId IS NULL OR p.assunto.id = :assuntoId)")
+    List<Processo> findByAlunoFiltros(Aluno aluno, String status, Long assuntoId, org.springframework.data.domain.Sort sort);
 }
