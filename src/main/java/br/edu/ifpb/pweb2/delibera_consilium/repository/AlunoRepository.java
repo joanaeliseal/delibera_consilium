@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AlunoRepository extends JpaRepository<Aluno, Long> {
     Aluno findByMatricula(String matricula);
+
+    Aluno findByLogin(String login);
 }
