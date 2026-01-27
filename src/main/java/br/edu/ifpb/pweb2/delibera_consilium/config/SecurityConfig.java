@@ -1,18 +1,54 @@
 package br.edu.ifpb.pweb2.delibera_consilium.config;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-// configuração de segurança da aplicação
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean
+    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/css/**", "/images/**", "/imagens/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/coord/**").hasRole("COORDENADOR")
+                .requestMatchers("/professor/**").hasAnyRole("PROFESSOR", "COORDENADOR")
+                .requestMatchers("/aluno/**").hasRole("ALUNO")
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/auth/login")
+                .defaultSuccessUrl("/home", true)
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/auth/logout")
+            )
+            .exceptionHandling(ex -> ex
+                .accessDeniedPage("/auth/acesso-negado")
+            );
+
+        return http.build();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -20,46 +56,47 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                // recursos públicos
-                .requestMatchers("/css/**", "/images/**", "/login", "/error").permitAll()
+    public UserDetailsService userDetailsService() {
+        // Usuários de teste - criados na 1ª execução da aplicação
+        UserDetails aluno = User.withUsername("aluno")
+            .password(passwordEncoder().encode("123456"))
+            .roles("ALUNO")
+            .build();
 
-                .requestMatchers("/admin/**").hasRole("ADMIN") // recursos restritos a administradores
+        UserDetails professor = User.withUsername("professor")
+            .password(passwordEncoder().encode("123456"))
+            .roles("PROFESSOR")
+            .build();
 
-                .requestMatchers("/coord/**").hasAnyRole("COORDENADOR") // recursos restritos a coordenadores
+        UserDetails coordenador = User.withUsername("coordenador")
+            .password(passwordEncoder().encode("123456"))
+            .roles("COORDENADOR", "PROFESSOR")
+            .build();
 
-                .requestMatchers("/professor/**").hasAnyRole("PROFESSOR", "COORDENADOR") // recursos restritos a professores
+        UserDetails admin = User.withUsername("admin")
+            .password(passwordEncoder().encode("123456"))
+            .roles("ADMIN")
+            .build();
 
-                .requestMatchers("/aluno/**").hasRole("ALUNO") // recursos restritos a alunos
+        // Gerenciador de usuários via JDBC (tabelas padrão do Spring Security)
+        JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
 
-                .requestMatchers("/", "/home").authenticated() // recursos acessíveis a todos os usuários autenticados
-            
-                .anyRequest().authenticated() // todas as outras requisições exigem autenticação
+        // Evita duplicação dos usuários no banco
+        if (!users.userExists(admin.getUsername())) {
+            users.createUser(aluno);
+            users.createUser(professor);
+            users.createUser(coordenador);
+            users.createUser(admin);
+        }
 
-            )
-        
-            .formLogin(form -> form
-                .loginPage("/login") // URL para login
-                .loginProcessingUrl("/perform_login") // URL para submissão do formulário de login
-                .defaultSuccessUrl("/home", true) // redireciona para /home após login bem-sucedido
-                .failureUrl("/login?error=true") // redireciona para /login com erro em caso de falha
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout") // URL para logout
-                .logoutSuccessUrl("/login?logout=true") // redireciona para /login após logout
-                .invalidateHttpSession(true)  // Invalida sessão
-                .deleteCookies("JSESSIONID")  // Remove cookie de sessão
-                .permitAll()
-            )
+        return users;
+    }
 
-            .sessionManagement(session -> session
-                .maximumSessions(1)  // Apenas 1 sessão por usuário
-                .expiredUrl("/login?expired=true")
-            );
-
-        return http.build();
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 }
