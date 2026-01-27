@@ -9,4 +9,6 @@ import java.util.List;
 public interface ProfessorRepository extends JpaRepository<Professor, Long> {
     //Buscar apenas professores que são coordenadores
     List<Professor> findByCoordenadorTrue();
+
+    Professor findByLogin(String login);
 }

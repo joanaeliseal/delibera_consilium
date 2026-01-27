@@ -8,7 +8,7 @@ O nome "Delibera Consilium" é uma expressão em latim que significa "Deliberaç
 
 ## 🚀 Tecnologias Utilizadas
 
-- **Java 21**: Linguagem de programação principal
+- **Java 17**: Linguagem de programação principal
 - **Spring Boot 3.5.7**: Framework para desenvolvimento de aplicações web
 - **Spring Web**: Módulo para construção de APIs e aplicações web
 - **PostgreSQL**: Sistema de gerenciamento de banco de dados
