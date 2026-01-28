@@ -9,13 +9,20 @@
                     <h4 class="mb-0">Novo Processo</h4>
                 </div>
                 <div class="card-body">
+                    
+                    <!-- Exibe nome do aluno logado -->
+                    <div class="alert alert-info mb-3" th:if="${alunoLogado}">
+                        <i class="bi bi-person-circle"></i>
+                        <strong>Solicitante:</strong> <span th:text="${alunoLogado.nome}"></span>
+                        <span class="ms-2 text-muted">(<span th:text="${alunoLogado.matricula}"></span>)</span>
+                    </div>
+
                     <!-- Formulário com enctype multipart para upload de arquivo -->
                     <form th:action="@{/aluno/processos/salvar}" 
                           th:object="${processo}" 
                           method="post"
                           enctype="multipart/form-data">
 
-                        <input type="hidden" name="alunoId" th:value="${alunoId}" />
                         <input type="hidden" th:field="*{id}" />
                         
                         <div class="mb-3">
@@ -35,7 +42,7 @@
                             <div class="invalid-feedback" th:errors="*{assunto}"></div>
                         </div>
 
-                        <!-- NOVO: Campo para upload do PDF -->
+                        <!-- Campo para upload do PDF -->
                         <div class="mb-3">
                             <label class="form-label">Anexar Requerimento em PDF (Opcional)</label>
                             <input type="file" 
@@ -48,7 +55,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <a th:href="@{/aluno/processos(alunoId=${alunoId})}" class="btn btn-secondary me-2">Cancelar</a>
+                            <a th:href="@{/aluno/processos}" class="btn btn-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-success">
                                 <i class="bi bi-check-lg"></i> Abrir Processo
                             </button>
