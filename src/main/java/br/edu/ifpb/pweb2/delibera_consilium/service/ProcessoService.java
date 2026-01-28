@@ -3,14 +3,20 @@ package br.edu.ifpb.pweb2.delibera_consilium.service;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Aluno;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Processo;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
+import br.edu.ifpb.pweb2.delibera_consilium.model.TipoVoto;
+import br.edu.ifpb.pweb2.delibera_consilium.model.Voto;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.ProcessoRepository;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.ProfessorRepository;
+import br.edu.ifpb.pweb2.delibera_consilium.repository.VotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProcessoService {
@@ -20,6 +26,9 @@ public class ProcessoService {
 
     @Autowired
     private ProfessorRepository professorRepository;
+
+    @Autowired
+    private VotoRepository votoRepository;
 
     public List<Processo> listarTodos() {
         return processoRepository.findAll();
@@ -78,6 +87,50 @@ public class ProcessoService {
             processo.setRelator(relator);
             processo.setDataDistribuicao(LocalDate.now());
             processo.setStatus("DISTRIBUIDO");
+            processoRepository.save(processo);
+        }
+    }
+
+    /**
+     * Conta os votos de um processo (REQFUNC 11)
+     * @return Map com contagem: {"COM_RELATOR": x, "DIVERGENTE": y, "AUSENTES": z}
+     */
+    public Map<String, Long> contarVotos(Long processoId) {
+        List<Voto> votos = votoRepository.findByProcessoId(processoId);
+
+        long comRelator = votos.stream()
+                .filter(v -> !v.isAusente() && v.getVoto() == TipoVoto.COM_RELATOR)
+                .count();
+
+        long divergente = votos.stream()
+                .filter(v -> !v.isAusente() && v.getVoto() == TipoVoto.DIVERGENTE)
+                .count();
+
+        long ausentes = votos.stream()
+                .filter(Voto::isAusente)
+                .count();
+
+        Map<String, Long> resultado = new HashMap<>();
+        resultado.put("COM_RELATOR", comRelator);
+        resultado.put("DIVERGENTE", divergente);
+        resultado.put("AUSENTES", ausentes);
+        resultado.put("TOTAL", (long) votos.size());
+
+        return resultado;
+    }
+
+    /**
+     * Julga um processo, definindo o resultado (REQFUNC 11)
+     * @param processoId ID do processo
+     * @param resultado DEFERIDO, INDEFERIDO ou RETIRADO_DE_PAUTA
+     */
+    @Transactional
+    public void julgarProcesso(Long processoId, String resultado) {
+        Processo processo = buscarPorId(processoId);
+        if (processo != null) {
+            processo.setResultado(resultado);
+            processo.setDataJulgamento(LocalDate.now());
+            processo.setStatus("JULGADO");
             processoRepository.save(processo);
         }
     }

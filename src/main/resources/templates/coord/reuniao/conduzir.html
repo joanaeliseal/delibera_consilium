@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-broadcast"></i> Conducao da Sessao</h2>
+            <p class="text-muted mb-0">
+                Data: <strong th:text="${#temporals.format(reuniao.dataReuniao, 'dd/MM/yyyy')}"></strong> |
+                Colegiado: <strong th:text="${reuniao.colegiado?.curso}"></strong> |
+                <span class="badge bg-primary">Em Andamento</span>
+            </p>
+        </div>
+        <div>
+            <!-- Finalizar Sessao -->
+            <form th:action="@{/coord/reunioes/{id}/finalizar(id=${reuniao.id})}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger"
+                        th:disabled="${totalJulgados < totalProcessos}"
+                        onclick="return confirm('Deseja finalizar esta sessao? Esta acao nao pode ser desfeita.')">
+                    <i class="bi bi-stop-fill"></i> Finalizar Sessao
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Progresso -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span>Progresso do Julgamento</span>
+                <span class="badge bg-secondary" th:text="${totalJulgados} + ' / ' + ${totalProcessos}"></span>
+            </div>
+            <div class="progress" style="height: 25px;">
+                <div class="progress-bar bg-success" role="progressbar"
+                     th:style="'width: ' + (${totalProcessos > 0 ? (totalJulgados * 100 / totalProcessos) : 0}) + '%'"
+                     th:text="${totalProcessos > 0 ? (totalJulgados * 100 / totalProcessos) : 0} + '%'">
+                </div>
+            </div>
+            <small class="text-muted" th:if="${totalJulgados < totalProcessos}">
+                Julgue todos os processos para poder finalizar a sessao.
+            </small>
+            <small class="text-success" th:if="${totalJulgados >= totalProcessos && totalProcessos > 0}">
+                <i class="bi bi-check-circle"></i> Todos os processos foram julgados. Voce pode finalizar a sessao.
+            </small>
+        </div>
+    </div>
+
+    <!-- Lista de Processos -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-list-ol"></i> Processos em Pauta</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="accordion" id="accordionProcessos">
+                <div class="accordion-item" th:each="p, stat : ${reuniao.processosEmPauta}">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                                th:data-bs-toggle="'collapse'"
+                                th:data-bs-target="'#collapse' + ${p.id}">
+                            <span class="me-3">
+                                <span th:if="${p.status == 'JULGADO'}" class="badge bg-success">
+                                    <i class="bi bi-check-lg"></i> Julgado
+                                </span>
+                                <span th:if="${p.status != 'JULGADO'}" class="badge bg-warning text-dark">
+                                    <i class="bi bi-hourglass"></i> Pendente
+                                </span>
+                            </span>
+                            <strong th:text="${p.numero}"></strong>
+                            <span class="ms-2 text-muted" th:text="' - ' + ${p.assunto?.nome}"></span>
+                            <span class="ms-auto me-3" th:if="${p.resultado != null}">
+                                <span th:if="${p.resultado == 'DEFERIDO'}" class="badge bg-success">Deferido</span>
+                                <span th:if="${p.resultado == 'INDEFERIDO'}" class="badge bg-danger">Indeferido</span>
+                                <span th:if="${p.resultado == 'RETIRADO_DE_PAUTA'}" class="badge bg-secondary">Retirado</span>
+                            </span>
+                        </button>
+                    </h2>
+                    <div th:id="'collapse' + ${p.id}" class="accordion-collapse collapse"
+                         th:data-bs-parent="'#accordionProcessos'">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <!-- Informacoes do Processo -->
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-info-circle"></i> Informacoes</h6>
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <th>Protocolo:</th>
+                                            <td th:text="${p.numero}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Aluno:</th>
+                                            <td th:text="${p.interessado?.nome}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Assunto:</th>
+                                            <td th:text="${p.assunto?.nome}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Relator:</th>
+                                            <td th:text="${p.relator?.nome}"></td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- Texto do Requerimento -->
+                                    <h6><i class="bi bi-file-text"></i> Requerimento</h6>
+                                    <div class="bg-light p-2 rounded" style="max-height: 150px; overflow-y: auto;">
+                                        <small th:text="${p.textoRequerimento}"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Votacao -->
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-bar-chart"></i> Votacao</h6>
+                                    <th:block th:with="votos=${votosMap.get(p.id)}">
+                                        <div class="row text-center mb-3">
+                                            <div class="col-4">
+                                                <div class="card bg-success text-white">
+                                                    <div class="card-body py-2">
+                                                        <h4 class="mb-0" th:text="${votos != null ? votos.get('COM_RELATOR') : 0}">0</h4>
+                                                        <small>Com Relator</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="card bg-danger text-white">
+                                                    <div class="card-body py-2">
+                                                        <h4 class="mb-0" th:text="${votos != null ? votos.get('DIVERGENTE') : 0}">0</h4>
+                                                        <small>Divergente</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="card bg-secondary text-white">
+                                                    <div class="card-body py-2">
+                                                        <h4 class="mb-0" th:text="${votos != null ? votos.get('AUSENTES') : 0}">0</h4>
+                                                        <small>Ausentes</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted text-center">
+                                            Total de votos: <strong th:text="${votos != null ? votos.get('TOTAL') : 0}">0</strong>
+                                        </p>
+                                    </th:block>
+
+                                    <!-- Acoes de Julgamento -->
+                                    <th:block th:if="${p.status != 'JULGADO'}">
+                                        <hr>
+                                        <h6><i class="bi bi-gavel"></i> Registrar Decisao</h6>
+                                        <div class="d-grid gap-2">
+                                            <form th:action="@{/coord/reunioes/{rid}/julgar/{pid}(rid=${reuniao.id}, pid=${p.id})}"
+                                                  method="post" class="d-inline">
+                                                <input type="hidden" name="resultado" value="DEFERIDO" />
+                                                <button type="submit" class="btn btn-success w-100 mb-2"
+                                                        onclick="return confirm('Confirma DEFERIMENTO do processo?')">
+                                                    <i class="bi bi-check-circle"></i> Deferir
+                                                </button>
+                                            </form>
+                                            <form th:action="@{/coord/reunioes/{rid}/julgar/{pid}(rid=${reuniao.id}, pid=${p.id})}"
+                                                  method="post" class="d-inline">
+                                                <input type="hidden" name="resultado" value="INDEFERIDO" />
+                                                <button type="submit" class="btn btn-danger w-100 mb-2"
+                                                        onclick="return confirm('Confirma INDEFERIMENTO do processo?')">
+                                                    <i class="bi bi-x-circle"></i> Indeferir
+                                                </button>
+                                            </form>
+                                            <form th:action="@{/coord/reunioes/{rid}/julgar/{pid}(rid=${reuniao.id}, pid=${p.id})}"
+                                                  method="post" class="d-inline">
+                                                <input type="hidden" name="resultado" value="RETIRADO_DE_PAUTA" />
+                                                <button type="submit" class="btn btn-secondary w-100"
+                                                        onclick="return confirm('Confirma RETIRADA DE PAUTA do processo?')">
+                                                    <i class="bi bi-dash-circle"></i> Retirar de Pauta
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </th:block>
+
+                                    <!-- Resultado ja registrado -->
+                                    <th:block th:if="${p.status == 'JULGADO'}">
+                                        <hr>
+                                        <div class="alert mb-0"
+                                             th:classappend="${p.resultado == 'DEFERIDO'} ? 'alert-success' : (${p.resultado == 'INDEFERIDO'} ? 'alert-danger' : 'alert-secondary')">
+                                            <strong>Decisao:</strong>
+                                            <span th:text="${p.resultado}"></span>
+                                            <br>
+                                            <small th:text="'Julgado em: ' + ${#temporals.format(p.dataJulgamento, 'dd/MM/yyyy')}"></small>
+                                        </div>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nenhum processo -->
+                <div th:if="${reuniao.processosEmPauta == null || reuniao.processosEmPauta.isEmpty()}"
+                     class="text-center text-muted py-5">
+                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                    Nenhum processo na pauta desta reuniao.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

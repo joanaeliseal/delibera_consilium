@@ -15,6 +15,9 @@ public class Voto {
 
     private boolean ausente;
 
+    @Column(columnDefinition = "TEXT")
+    private String justificativa;
+
     @ManyToOne
     @JoinColumn(name = "processo_id")
     private Processo processo;

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+
+            <!-- Cabeçalho de boas-vindas -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-house-door"></i> Bem-vindo ao Delibera Consilium</h4>
+                </div>
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-building text-primary" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Sistema de Deliberações Colegiadas</h5>
+                    <p class="text-muted mb-0">Selecione uma das opções abaixo para começar.</p>
+                </div>
+            </div>
+
+            <!-- Painel do Administrador -->
+            <div sec:authorize="hasRole('ADMIN')" class="card shadow mb-4 border-dark">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-gear-fill"></i> Painel Administrativo</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Gerencie os cadastros do sistema.</p>
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a th:href="@{/admin/alunos}" class="btn btn-outline-dark w-100">
+                                <i class="bi bi-people-fill"></i> Alunos
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a th:href="@{/admin/professores}" class="btn btn-outline-dark w-100">
+                                <i class="bi bi-person-badge-fill"></i> Professores
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a th:href="@{/admin/assuntos}" class="btn btn-outline-dark w-100">
+                                <i class="bi bi-tag-fill"></i> Assuntos
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a th:href="@{/admin/colegiados}" class="btn btn-outline-dark w-100">
+                                <i class="bi bi-diagram-3-fill"></i> Colegiados
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel do Coordenador -->
+            <div sec:authorize="hasRole('COORDENADOR')" class="card shadow mb-4 border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-check-fill"></i> Painel do Coordenador</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Distribua e acompanhe os processos do colegiado.</p>
+                    <a th:href="@{/coord/processos}" class="btn btn-success">
+                        <i class="bi bi-folder2-open"></i> Gerenciar Processos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Painel do Professor -->
+            <div sec:authorize="hasAnyRole('PROFESSOR', 'COORDENADOR')" class="card shadow mb-4 border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-journal-text"></i> Painel do Professor</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Visualize os processos em que você é relator.</p>
+                    <a th:href="@{/professor/processos}" class="btn btn-info text-white">
+                        <i class="bi bi-file-earmark-text"></i> Meus Processos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Painel do Aluno -->
+            <div sec:authorize="hasRole('ALUNO')" class="card shadow mb-4 border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-mortarboard-fill"></i> Área do Aluno</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Acompanhe seus processos ou abra uma nova solicitação.</p>
+                    <a th:href="@{/aluno/processos}" class="btn btn-warning text-dark me-2">
+                        <i class="bi bi-list-ul"></i> Meus Processos
+                    </a>
+                    <a th:href="@{/aluno/processos/novo}" class="btn btn-outline-warning text-dark">
+                        <i class="bi bi-plus-circle"></i> Novo Processo
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+</body>
+</html>
