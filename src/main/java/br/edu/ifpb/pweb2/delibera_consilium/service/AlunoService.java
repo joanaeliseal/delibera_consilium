@@ -16,16 +16,19 @@ public class AlunoService {
         return alunoRepository.findAll();
     }
 
-    public Aluno buscarPorLogin(String login) {
-        return alunoRepository.findByLogin(login);
-    } 
-
     public Aluno buscarPorId(Long id) {
         return alunoRepository.findById(id).orElse(null);
     }
 
     public Aluno buscarPorMatricula(String matricula) {
         return alunoRepository.findByMatricula(matricula);
+    }
+    
+    /**
+     * Busca aluno por login (usado para autenticação)
+     */
+    public Aluno buscarPorLogin(String login) {
+        return alunoRepository.findByLogin(login);
     }
 
     public Aluno salvar(Aluno aluno) {
