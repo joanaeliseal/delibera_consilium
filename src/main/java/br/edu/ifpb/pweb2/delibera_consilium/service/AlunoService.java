@@ -16,6 +16,10 @@ public class AlunoService {
         return alunoRepository.findAll();
     }
 
+    public Aluno buscarPorLogin(String login) {
+        return alunoRepository.findByLogin(login);
+    } 
+
     public Aluno buscarPorId(Long id) {
         return alunoRepository.findById(id).orElse(null);
     }
