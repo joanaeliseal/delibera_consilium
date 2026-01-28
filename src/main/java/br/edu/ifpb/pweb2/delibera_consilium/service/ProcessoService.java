@@ -11,7 +11,7 @@ import br.edu.ifpb.pweb2.delibera_consilium.repository.VotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true) // ADICIONADO: Resolve erro de LOB ao ler processos
 public class ProcessoService {
 
     @Autowired
@@ -64,6 +65,7 @@ public class ProcessoService {
     }
 
     // logica pra criar um processo
+    @Transactional // ADICIONADO: Necessário para operações de escrita
     public Processo salvar(Processo processo) {
         // se for um processo novo (com id nulo)
         if (processo.getId() == null) {
@@ -79,6 +81,7 @@ public class ProcessoService {
     }
 
     // logica pra distribuir processo (REQFUNC 8)
+    @Transactional // ADICIONADO: Necessário para operações de escrita
     public void distribuirProcesso(Long idProcesso, Long idRelator) {
         Processo processo = this.buscarPorId(idProcesso);
         Professor relator = professorRepository.findById(idRelator).orElse(null);
@@ -118,5 +121,4 @@ public class ProcessoService {
 
         return resultado;
     }
-
 }
