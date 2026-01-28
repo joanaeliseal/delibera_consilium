@@ -1,102 +1,96 @@
 package br.edu.ifpb.pweb2.delibera_consilium.config;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import br.edu.ifpb.pweb2.delibera_consilium.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private DataSource dataSource;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    @Bean
-    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/css/**", "/images/**", "/imagens/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/coord/**").hasRole("COORDENADOR")
-                .requestMatchers("/professor/**").hasAnyRole("PROFESSOR", "COORDENADOR")
-                .requestMatchers("/aluno/**").hasRole("ALUNO")
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/auth/login")
-                .defaultSuccessUrl("/home", true)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/auth/logout")
-            )
-            .exceptionHandling(ex -> ex
-                .accessDeniedPage("/auth/acesso-negado")
-            );
-
-        return http.build();
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+        this.customUserDetailsService = customUserDetailsService;
     }
 
+    /**
+     * Configura o encoder de senha usando BCrypt
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        // Usuários de teste - criados na 1ª execução da aplicação
-        UserDetails aluno = User.withUsername("aluno")
-            .password(passwordEncoder().encode("123456"))
-            .roles("ALUNO")
-            .build();
-
-        UserDetails professor = User.withUsername("professor")
-            .password(passwordEncoder().encode("123456"))
-            .roles("PROFESSOR")
-            .build();
-
-        UserDetails coordenador = User.withUsername("coordenador")
-            .password(passwordEncoder().encode("123456"))
-            .roles("COORDENADOR", "PROFESSOR")
-            .build();
-
-        UserDetails admin = User.withUsername("admin")
-            .password(passwordEncoder().encode("123456"))
-            .roles("ADMIN")
-            .build();
-
-        // Gerenciador de usuários via JDBC (tabelas padrão do Spring Security)
-        JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
-
-        // Evita duplicação dos usuários no banco
-        if (!users.userExists(admin.getUsername())) {
-            users.createUser(aluno);
-            users.createUser(professor);
-            users.createUser(coordenador);
-            users.createUser(admin);
-        }
-
-        return users;
-    }
-
+    /**
+     * Configura o provider de autenticação usando nosso UserDetailsService customizado
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService());
+        provider.setUserDetailsService(customUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
+    }
+
+    /**
+     * Configuração de segurança HTTP
+     */
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                // Recursos públicos (CSS, JS, imagens, página de login)
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                .requestMatchers("/login", "/error").permitAll()
+                
+                // Rotas administrativas - apenas ADMIN
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                
+                // Rotas do coordenador - apenas COORDENADOR
+                .requestMatchers("/coord/**").hasRole("COORDENADOR")
+                
+                // Rotas do professor - PROFESSOR ou COORDENADOR
+                .requestMatchers("/professor/**").hasAnyRole("PROFESSOR", "COORDENADOR")
+                
+                // Rotas do aluno - apenas ALUNO
+                .requestMatchers("/aluno/**").hasRole("ALUNO")
+                
+                // Qualquer outra requisição precisa estar autenticada
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/dashboard", true)
+                .failureUrl("/login?error=true")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            )
+            // CSRF habilitado (mais seguro)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**") // Se usar H2 console
+            )
+            // Permite frames do mesmo domínio (para H2 console se necessário)
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+            );
+
+        return http.build();
     }
 }
