@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span th:if="${reuniao.id == null}">Nova Reuniao</span>
+                        <span th:if="${reuniao.id != null}">Editar Reuniao</span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/coord/reunioes/salvar}" th:object="${reuniao}" method="post">
+                        <input type="hidden" th:field="*{id}" />
+                        <input type="hidden" th:field="*{status}" th:if="${reuniao.id != null}" />
+
+                        <div class="mb-3">
+                            <label for="dataReuniao" class="form-label">Data da Reuniao *</label>
+                            <input type="date" class="form-control" th:field="*{dataReuniao}"
+                                   th:classappend="${#fields.hasErrors('dataReuniao')} ? 'is-invalid'" />
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dataReuniao')}"
+                                 th:errors="*{dataReuniao}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="colegiado" class="form-label">Colegiado *</label>
+                            <select class="form-select" th:field="*{colegiado}"
+                                    th:classappend="${#fields.hasErrors('colegiado')} ? 'is-invalid'">
+                                <option value="">Selecione um colegiado</option>
+                                <option th:each="c : ${colegiados}" th:value="${c.id}"
+                                        th:text="${c.curso + ' - ' + c.portaria}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('colegiado')}"
+                                 th:errors="*{colegiado}"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/coord/reunioes}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i> Salvar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

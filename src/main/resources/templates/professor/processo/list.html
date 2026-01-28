@@ -68,6 +68,10 @@
                         <span th:if="${p.parecer != null}" class="badge bg-success">Enviado</span>
                     </td>
                     <td>
+                        <a th:href="@{/professor/votos/processo/{id}(id=${p.id}, usuario=${professorLogado?.id})}"
+                           class="btn btn-sm btn-success">
+                            <i class="bi bi-check2-square"></i> Votar
+                        </a>
                         <button class="btn btn-sm btn-outline-dark" disabled>
                             <i class="bi bi-file-earmark-text"></i> Emitir Parecer
                         </button>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!--
+    Fragmento de paginacao para uso com Spring Data Page
+    Uso: th:replace="~{fragments/pagination :: pagination(page=${page}, url='/caminho')}"
+
+    Parametros:
+    - page: objeto Page do Spring Data
+    - url: URL base para os links de paginacao
+-->
+<nav th:fragment="pagination(page, url)" aria-label="Navegacao de paginas" th:if="${page != null && page.totalPages > 1}">
+    <ul class="pagination justify-content-center">
+        <!-- Primeira pagina -->
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=0, size=${page.size})}" aria-label="Primeira">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+        </li>
+
+        <!-- Pagina anterior -->
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=${page.number - 1}, size=${page.size})}" aria-label="Anterior">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+
+        <!-- Numeros das paginas -->
+        <th:block th:with="
+            start=${page.number > 2 ? page.number - 2 : 0},
+            end=${page.number + 2 < page.totalPages ? page.number + 2 : page.totalPages - 1}">
+            <li class="page-item" th:each="i : ${#numbers.sequence(start, end)}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a class="page-link" th:href="@{${url}(page=${i}, size=${page.size})}" th:text="${i + 1}">1</a>
+            </li>
+        </th:block>
+
+        <!-- Proxima pagina -->
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=${page.number + 1}, size=${page.size})}" aria-label="Proxima">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+
+        <!-- Ultima pagina -->
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=${page.totalPages - 1}, size=${page.size})}" aria-label="Ultima">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        </li>
+    </ul>
+
+    <!-- Informacao da paginacao -->
+    <p class="text-center text-muted small">
+        Mostrando <span th:text="${page.numberOfElements}">0</span> de
+        <span th:text="${page.totalElements}">0</span> registros
+        (Pagina <span th:text="${page.number + 1}">1</span> de <span th:text="${page.totalPages}">1</span>)
+    </p>
+</nav>
+
+</html>

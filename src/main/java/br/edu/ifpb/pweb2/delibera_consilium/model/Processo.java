@@ -29,7 +29,13 @@ public class Processo {
     @Lob
     private byte[] parecer;
     
-    private String status; 
+    private String status;
+
+    // Resultado do julgamento: DEFERIDO, INDEFERIDO, RETIRADO_DE_PAUTA
+    private String resultado;
+
+    // Data em que o processo foi julgado
+    private LocalDate dataJulgamento;
 
     @ManyToOne
     @JoinColumn(name = "aluno_id")

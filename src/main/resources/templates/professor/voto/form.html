@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="mb-3">
+        <h2><i class="bi bi-check2-square"></i> Votar no Processo</h2>
+        <a th:href="@{/professor/processos}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <!-- Informacoes do Processo -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Dados do Processo</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Protocolo:</strong> <span th:text="${processo.numero}"></span></p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Aluno:</strong> <span th:text="${processo.interessado?.nome}"></span></p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Assunto:</strong> <span th:text="${processo.assunto?.nome}"></span></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Relator:</strong> <span th:text="${processo.relator?.nome}"></span></p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Status:</strong>
+                        <span class="badge bg-info" th:text="${processo.status}"></span>
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Data Distribuicao:</strong>
+                        <span th:text="${processo.dataDistribuicao != null ? #temporals.format(processo.dataDistribuicao, 'dd/MM/yyyy') : '-'}"></span>
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <p><strong>Texto do Requerimento:</strong></p>
+            <div class="p-3 bg-light border rounded">
+                <p class="mb-0" th:text="${processo.textoRequerimento}"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de Voto -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-hand-thumbs-up"></i> Registrar Voto</h5>
+        </div>
+        <div class="card-body">
+            <div th:if="${votoExistente}" class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Voce ja votou neste processo.
+                Seu voto atual: <strong th:text="${votoExistente.ausente ? 'AUSENTE' : votoExistente.voto}"></strong>
+                <span th:if="${votoExistente.justificativa}"> - Justificativa: <em th:text="${votoExistente.justificativa}"></em></span>
+            </div>
+
+            <form th:action="@{/professor/votos/registrar}" method="post">
+                <input type="hidden" name="processoId" th:value="${processo.id}">
+                <input type="hidden" name="professorId" th:value="${professor?.id}">
+
+                <div class="mb-3">
+                    <label for="tipoVoto" class="form-label">Tipo de Voto *</label>
+                    <select class="form-select" id="tipoVoto" name="tipoVoto" required>
+                        <option value="">Selecione...</option>
+                        <option th:each="tipo : ${tiposVoto}"
+                                th:value="${tipo}"
+                                th:text="${tipo}"
+                                th:selected="${votoExistente != null and votoExistente.voto == tipo}">
+                        </option>
+                    </select>
+                    <div class="form-text">
+                        <strong>COM_RELATOR:</strong> Concorda com o parecer do relator |
+                        <strong>DIVERGENTE:</strong> Discorda do parecer do relator
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="justificativa" class="form-label">Justificativa</label>
+                    <textarea class="form-control" id="justificativa" name="justificativa" rows="4"
+                              placeholder="Opcional: informe a justificativa do seu voto..."
+                              th:text="${votoExistente?.justificativa}"></textarea>
+                    <div class="form-text">A justificativa e obrigatoria para votos divergentes.</div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg"></i> Registrar Voto
+                    </button>
+                </div>
+            </form>
+
+            <hr>
+
+            <!-- Opcao de Ausencia -->
+            <form th:action="@{/professor/votos/ausencia}" method="post" class="d-inline">
+                <input type="hidden" name="processoId" th:value="${processo.id}">
+                <input type="hidden" name="professorId" th:value="${professor?.id}">
+                <button type="submit" class="btn btn-outline-warning"
+                        onclick="return confirm('Deseja registrar sua ausencia na votacao deste processo?')">
+                    <i class="bi bi-person-dash"></i> Registrar Ausencia
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Votos do Processo -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0"><i class="bi bi-list-check"></i> Votos Registrados</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Professor</th>
+                    <th>Voto</th>
+                    <th>Justificativa</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="v : ${votos}">
+                    <td th:text="${v.professor?.nome}"></td>
+                    <td>
+                        <span th:if="${v.ausente}" class="badge bg-secondary">AUSENTE</span>
+                        <span th:if="${!v.ausente and v.voto.name() == 'COM_RELATOR'}" class="badge bg-success">COM RELATOR</span>
+                        <span th:if="${!v.ausente and v.voto.name() == 'DIVERGENTE'}" class="badge bg-danger">DIVERGENTE</span>
+                    </td>
+                    <td>
+                        <span th:if="${v.justificativa}" th:text="${v.justificativa}"></span>
+                        <span th:unless="${v.justificativa}" class="text-muted">-</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(votos)}">
+                    <td colspan="3" class="text-center text-muted py-3">Nenhum voto registrado ainda.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
