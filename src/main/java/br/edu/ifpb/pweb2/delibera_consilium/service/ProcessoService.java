@@ -11,7 +11,7 @@ import br.edu.ifpb.pweb2.delibera_consilium.repository.VotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -119,19 +119,4 @@ public class ProcessoService {
         return resultado;
     }
 
-    /**
-     * Julga um processo, definindo o resultado (REQFUNC 11)
-     * @param processoId ID do processo
-     * @param resultado DEFERIDO, INDEFERIDO ou RETIRADO_DE_PAUTA
-     */
-    @Transactional
-    public void julgarProcesso(Long processoId, String resultado) {
-        Processo processo = buscarPorId(processoId);
-        if (processo != null) {
-            processo.setResultado(resultado);
-            processo.setDataJulgamento(LocalDate.now());
-            processo.setStatus("JULGADO");
-            processoRepository.save(processo);
-        }
-    }
 }
