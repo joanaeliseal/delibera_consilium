@@ -3,6 +3,7 @@ package br.edu.ifpb.pweb2.delibera_consilium.controller;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Aluno;
 import br.edu.ifpb.pweb2.delibera_consilium.service.AlunoService;
 import jakarta.validation.Valid;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,9 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AlunoController {
 
     private final AlunoService service;
+    private final PasswordEncoder passwordEncoder;
 
-    public AlunoController(AlunoService service) {
+    public AlunoController(AlunoService service, PasswordEncoder passwordEncoder) {
         this.service = service;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -36,16 +39,26 @@ public class AlunoController {
                          BindingResult result,
                          RedirectAttributes redirect) {
        
-        // busca no banco se já tem alguém com essa matrícula
+        // Busca no banco se já tem alguém com essa matrícula
         Aluno alunoExistente = service.buscarPorMatricula(aluno.getMatricula());
 
-        // se encontrou alguem e nao sou eu mesmo (pros casos de editar)
+        // Se encontrou alguém e não sou eu mesmo (para casos de editar)
         if (alunoExistente != null && !alunoExistente.getId().equals(aluno.getId())) {
             result.rejectValue("matricula", "error.matricula", "Esta matrícula já está cadastrada para outro aluno.");
         }
 
         if (result.hasErrors()) {
             return "admin/aluno/form";
+        }
+
+        // ⭐ CRIPTOGRAFA A SENHA AUTOMATICAMENTE
+        // Só criptografa se:
+        // 1. For um novo aluno (id == null) OU
+        // 2. A senha foi alterada (não começa com $2a$ que é o prefixo do BCrypt)
+        if (aluno.getId() == null || 
+            (aluno.getSenha() != null && !aluno.getSenha().isEmpty() && !aluno.getSenha().startsWith("$2a$"))) {
+            String senhaCriptografada = passwordEncoder.encode(aluno.getSenha());
+            aluno.setSenha(senhaCriptografada);
         }
 
         service.salvar(aluno);
@@ -55,7 +68,11 @@ public class AlunoController {
 
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model) {
-        model.addAttribute("aluno", service.buscarPorId(id));
+        Aluno aluno = service.buscarPorId(id);
+        // ⭐ IMPORTANTE: Limpa a senha ao editar para não mostrar o hash
+        // O admin terá que digitar uma nova senha se quiser alterar
+        aluno.setSenha("");
+        model.addAttribute("aluno", aluno);
         return "admin/aluno/form";
     }
 

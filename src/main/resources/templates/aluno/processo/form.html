@@ -9,9 +9,19 @@
                     <h4 class="mb-0">Novo Processo</h4>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/aluno/processos/salvar}" th:object="${processo}" method="post">
+                    
+                    <!-- Exibe nome do aluno logado -->
+                    <div class="alert alert-info mb-3" th:if="${alunoLogado}">
+                        <i class="bi bi-person-circle"></i>
+                        <strong>Solicitante:</strong> <span th:text="${alunoLogado.nome}"></span>
+                        <span class="ms-2 text-muted">(<span th:text="${alunoLogado.matricula}"></span>)</span>
+                    </div>
 
-                        <input type="hidden" name="alunoId" th:value="${alunoId}" />
+                    <!-- Formulário com enctype multipart para upload de arquivo -->
+                    <form th:action="@{/aluno/processos/salvar}" 
+                          th:object="${processo}" 
+                          method="post"
+                          enctype="multipart/form-data">
 
                         <input type="hidden" th:field="*{id}" />
                         
@@ -32,9 +42,23 @@
                             <div class="invalid-feedback" th:errors="*{assunto}"></div>
                         </div>
 
+                        <!-- Campo para upload do PDF -->
+                        <div class="mb-3">
+                            <label class="form-label">Anexar Requerimento em PDF (Opcional)</label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   name="pdfFile" 
+                                   accept="application/pdf">
+                            <small class="form-text text-muted">
+                                <i class="bi bi-info-circle"></i> Arquivo PDF, tamanho máximo: 5MB
+                            </small>
+                        </div>
+
                         <div class="d-flex justify-content-end">
                             <a th:href="@{/aluno/processos}" class="btn btn-secondary me-2">Cancelar</a>
-                            <button type="submit" class="btn btn-success">Abrir Processo</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-lg"></i> Abrir Processo
+                            </button>
                         </div>
                     </form>
                 </div>
