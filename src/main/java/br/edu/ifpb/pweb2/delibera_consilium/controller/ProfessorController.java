@@ -3,6 +3,7 @@ package br.edu.ifpb.pweb2.delibera_consilium.controller;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
 import br.edu.ifpb.pweb2.delibera_consilium.service.ProfessorService;
 import jakarta.validation.Valid;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,9 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProfessorController {
 
     private final ProfessorService service;
+    private final PasswordEncoder passwordEncoder;
 
-    public ProfessorController(ProfessorService service) {
+    public ProfessorController(ProfessorService service, PasswordEncoder passwordEncoder) {
         this.service = service;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -40,6 +43,16 @@ public class ProfessorController {
             return "admin/professor/form";
         }
 
+        // ⭐ CRIPTOGRAFA A SENHA AUTOMATICAMENTE
+        // Só criptografa se:
+        // 1. For um novo professor (id == null) OU
+        // 2. A senha foi alterada (não começa com $2a$ que é o prefixo do BCrypt)
+        if (professor.getId() == null || 
+            (professor.getSenha() != null && !professor.getSenha().isEmpty() && !professor.getSenha().startsWith("$2a$"))) {
+            String senhaCriptografada = passwordEncoder.encode(professor.getSenha());
+            professor.setSenha(senhaCriptografada);
+        }
+
         service.salvar(professor);
         redirect.addFlashAttribute("msg", "Professor salvo com sucesso!");
         return "redirect:/admin/professores";
@@ -47,7 +60,10 @@ public class ProfessorController {
 
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model) {
-        model.addAttribute("professor", service.buscarPorId(id));
+        Professor professor = service.buscarPorId(id);
+        // ⭐ IMPORTANTE: Limpa a senha ao editar para não mostrar o hash
+        professor.setSenha("");
+        model.addAttribute("professor", professor);
         return "admin/professor/form";
     }
 
@@ -62,4 +78,3 @@ public class ProfessorController {
         return "redirect:/admin/professores";
     }
 }
-
