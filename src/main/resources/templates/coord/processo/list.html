@@ -57,7 +57,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="p : ${processos}">
+                <tr th:each="p : ${page.content}">
                     <td th:text="${p.numero}"></td>
                     <td th:text="${p.interessado?.nome}"></td>
                     <td th:text="${p.assunto?.nome}"></td>
@@ -117,6 +117,25 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="card-footer" th:if="${page.totalPages > 1}">
+            <nav>
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/coord/processos(page=${page.number - 1}, status=${param.status}, alunoId=${param.alunoId}, relatorId=${param.relatorId})}">Anterior</a>
+                    </li>
+
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                        th:classappend="${page.number == i} ? 'active'">
+                        <a class="page-link" th:href="@{/coord/processos(page=${i}, status=${param.status}, alunoId=${param.alunoId}, relatorId=${param.relatorId})}" th:text="${i + 1}">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/coord/processos(page=${page.number + 1}, status=${param.status}, alunoId=${param.alunoId}, relatorId=${param.relatorId})}">Próximo</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </section>
