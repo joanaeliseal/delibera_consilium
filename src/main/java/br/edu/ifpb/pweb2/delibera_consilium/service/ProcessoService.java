@@ -9,6 +9,8 @@ import br.edu.ifpb.pweb2.delibera_consilium.repository.ProcessoRepository;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.ProfessorRepository;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.VotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +78,15 @@ public class ProcessoService {
             processo.setNumero(ano + "-" + codigoAleatorio);
         }
         return processoRepository.save(processo);
+    }
+
+    public Page<Processo> listarProcessosPaginados(Pageable pageable) {
+        return processoRepository.findAll(pageable);
+    }
+
+    public Page<Processo> listarComFiltrosPaginado(String status, Long alunoId, Long relatorId, Pageable pageable) {
+        if (status != null && status.isEmpty()) status = null;
+        return processoRepository.findByFiltrosPaginado(status, alunoId, relatorId, pageable);
     }
 
     // logica pra distribuir processo (REQFUNC 8)

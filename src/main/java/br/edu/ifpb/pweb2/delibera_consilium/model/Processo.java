@@ -28,6 +28,11 @@ public class Processo {
 
     @Lob
     private byte[] parecer;
+
+    @Column(name = "requerimento_pdf", columnDefinition = "bytea")
+    private byte[] requerimentoPdf;
+  
+    private String requerimentoPdfNome;
     
     private String status;
 

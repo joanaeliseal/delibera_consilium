@@ -4,8 +4,12 @@ package br.edu.ifpb.pweb2.delibera_consilium.repository;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Processo;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Aluno;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
@@ -43,4 +47,19 @@ public interface ProcessoRepository extends JpaRepository<Processo, Long> {
 
     // Processos de uma reuniao especifica
     List<Processo> findByReuniaoId(Long reuniaoId);
+
+    // Busca todos os processos de forma paginada
+    Page<Processo> findAll(Pageable pageable);
+
+    // Caso queira filtrar por status (ex: apenas processos "CRIADOS") de forma paginada
+    Page<Processo> findByStatus(String status, Pageable pageable);
+
+    @Query("SELECT p FROM Processo p WHERE " +
+        "(:status IS NULL OR p.status = :status) AND " +
+        "(:alunoId IS NULL OR p.interessado.id = :alunoId) AND " +
+        "(:relatorId IS NULL OR p.relator.id = :relatorId)")
+    Page<Processo> findByFiltrosPaginado(@Param("status") String status, 
+                                        @Param("alunoId") Long alunoId, 
+                                        @Param("relatorId") Long relatorId, 
+                                        Pageable pageable);
 }
