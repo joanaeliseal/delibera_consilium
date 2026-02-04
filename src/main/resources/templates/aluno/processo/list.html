@@ -9,7 +9,6 @@
         </a>
     </div>
 
-    <!-- Exibe nome do aluno logado -->
     <div class="alert alert-info mb-3" th:if="${alunoLogado}">
         <i class="bi bi-person-circle"></i>
         <strong>Aluno:</strong> <span th:text="${alunoLogado.nome}"></span>
@@ -19,7 +18,6 @@
     <div class="card mb-3 bg-light">
         <div class="card-body py-2">
             <form th:action="@{/aluno/processos}" method="get" class="row g-3 align-items-end">
-
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Status</label>
                     <select name="status" class="form-select form-select-sm">
@@ -45,7 +43,7 @@
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Ordenar por Data</label>
                     <select name="ordem" class="form-select form-select-sm">
-                        <option value="desc" th:selected="${param.ordem == null || param.ordem[0] == 'desc'}">Mais Recentes (Padrão)</option>
+                        <option value="desc" th:selected="${param.ordem == null || param.ordem[0] == 'desc'}">Mais Recentes</option>
                         <option value="asc" th:selected="${param.ordem != null && param.ordem[0] == 'asc'}">Mais Antigos</option>
                     </select>
                 </div>
@@ -54,9 +52,7 @@
                     <button type="submit" class="btn btn-sm btn-primary w-100">
                         <i class="bi bi-filter"></i> Filtrar
                     </button>
-                    <a th:href="@{/aluno/processos}" class="btn btn-sm btn-outline-secondary w-100 mt-1">
-                        Limpar
-                    </a>
+                    <a th:href="@{/aluno/processos}" class="btn btn-sm btn-outline-secondary w-100 mt-1">Limpar</a>
                 </div>
             </form>
         </div>
@@ -65,53 +61,48 @@
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <table class="table table-hover mb-0">
-                <thead class="table-success">
+                <thead class="table-dark">
                 <tr>
                     <th>Protocolo</th>
                     <th>Assunto</th>
-                    <th>Data Criação</th>
+                    <th>Criação</th>
                     <th>Status</th>
                     <th>Relator</th>
-                    <th class="text-center">PDF</th>
+                    <th class="text-center">Doc</th>
                     <th class="text-center">Ações</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="p : ${processos}">
-                    <td th:text="${p.numero}" class="fw-bold">2025-A001</td>
-                    <td th:text="${p.assunto?.nome}">Assunto</td>
-                    <td th:text="${#temporals.format(p.dataRecepcao, 'dd/MM/yyyy')}">01/01/2025</td>
+                    <td th:text="${p.numero}" class="fw-bold text-primary"></td>
+                    <td th:text="${p.assunto?.nome}"></td>
+                    <td th:text="${#temporals.format(p.dataRecepcao, 'dd/MM/yyyy')}"></td>
                     <td>
                         <span th:class="${'badge ' + (p.status == 'CRIADO' ? 'bg-secondary' : (p.status == 'DISTRIBUIDO' ? 'bg-warning text-dark' : 'bg-success'))}" 
-                              th:text="${p.status}">STATUS</span>
+                              th:text="${p.status}"></span>
                     </td>
                     <td>
-                        <span th:if="${p.relator != null}" th:text="${p.relator.nome}">Nome Relator</span>
-                        <span th:unless="${p.relator != null}" class="text-muted fst-italic">Aguardando distribuição...</span>
+                        <span th:if="${p.relator != null}" th:text="${p.relator.nome}"></span>
+                        <span th:unless="${p.relator != null}" class="text-muted small italic">Pendente...</span>
                     </td>
                     
-                    <!-- Status do PDF -->
                     <td class="text-center">
                         <span th:if="${p.temRequerimentoPdf()}" class="text-success" title="PDF anexado">
-                            <i class="bi bi-file-pdf-fill fs-5"></i>
+                            <i class="bi bi-check-circle-fill"></i>
                         </span>
                         <span th:unless="${p.temRequerimentoPdf()}" class="text-muted" title="Sem PDF">
-                            <i class="bi bi-file-earmark fs-5"></i>
+                            <i class="bi bi-dash-circle"></i>
                         </span>
                     </td>
                     
-                    <!-- Ações para PDF -->
                     <td class="text-center">
-                        <!-- Botão de visualizar PDF -->
                         <a th:if="${p.temRequerimentoPdf()}"
                            th:href="@{/aluno/processos/{id}/pdf(id=${p.id})}"
-                           class="btn btn-sm btn-outline-primary me-1"
-                           target="_blank"
-                           title="Visualizar PDF">
-                            <i class="bi bi-eye"></i>
+                           class="btn btn-sm btn-outline-info me-1"
+                           target="_blank" title="Visualizar">
+                             <i class="bi bi-eye"></i>
                         </a>
                         
-                        <!-- Botão de upload/substituir -->
                         <a th:if="${p.podeReceberUpload()}"
                            th:href="@{/aluno/processos/{id}/upload(id=${p.id})}"
                            th:class="${'btn btn-sm ' + (p.temRequerimentoPdf() ? 'btn-outline-warning' : 'btn-outline-success')}"
@@ -119,17 +110,13 @@
                             <i th:class="${'bi ' + (p.temRequerimentoPdf() ? 'bi-arrow-repeat' : 'bi-upload')}"></i>
                         </a>
                         
-                        <!-- Mensagem quando bloqueado -->
-                        <span th:unless="${p.podeReceberUpload()}" class="text-muted small">
-                            <i class="bi bi-lock"></i>
+                        <span th:unless="${p.podeReceberUpload()}" class="text-muted" title="Processo bloqueado para alterações">
+                            <i class="bi bi-lock-fill"></i>
                         </span>
                     </td>
                 </tr>
-                
                 <tr th:if="${#lists.isEmpty(processos)}">
-                    <td colspan="7" class="text-center text-muted py-3">
-                        <i class="bi bi-inbox"></i> Nenhum processo encontrado com esses filtros.
-                    </td>
+                    <td colspan="7" class="text-center text-muted py-4">Nenhum processo encontrado.</td>
                 </tr>
                 </tbody>
             </table>
