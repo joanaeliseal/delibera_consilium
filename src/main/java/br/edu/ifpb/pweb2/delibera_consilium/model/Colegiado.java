@@ -31,10 +31,6 @@ public class Colegiado {
     @NotBlank(message = "O nome do curso é obrigatório")
     private String curso;
 
-    @OneToOne
-    @JoinColumn(name = "coordenador_id")
-    private Professor coordenador; // Adicione este campo
-
     @ManyToMany
     @JoinTable(
         name = "colegiado_membros",
