@@ -28,10 +28,8 @@ public class Processo {
 
     @Lob
     private byte[] parecer;
-    
-    // NOVO: Campo para armazenar o PDF do requerimento
-    @Lob
-    @Column(columnDefinition = "bytea")
+
+    @Column(name = "requerimento_pdf", columnDefinition = "bytea")
     private byte[] requerimentoPdf;
   
     private String requerimentoPdfNome;
