@@ -6,9 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class DeliberaConsiliumApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DeliberaConsiliumApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DeliberaConsiliumApplication.class, args);
+    }
 
 }
-

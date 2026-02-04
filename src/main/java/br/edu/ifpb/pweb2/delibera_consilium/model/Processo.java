@@ -34,13 +34,7 @@ public class Processo {
   
     private String requerimentoPdfNome;
     
-    private String status;
-
-    // Resultado do julgamento: DEFERIDO, INDEFERIDO, RETIRADO_DE_PAUTA
-    private String resultado;
-
-    // Data em que o processo foi julgado
-    private LocalDate dataJulgamento;
+    private String status; 
 
     @ManyToOne
     @JoinColumn(name = "aluno_id")
@@ -63,4 +57,13 @@ public class Processo {
     @OneToMany(mappedBy = "processo")
     @ToString.Exclude
     private List<Voto> votos;
+    
+    public boolean temRequerimentoPdf() {
+        return this.requerimentoPdf != null && this.requerimentoPdf.length > 0;
+    }
+    
+    public boolean podeReceberUpload() {
+    // Só pode se o status for nulo (novo) ou "CRIADO"
+    return this.status == null || "CRIADO".equals(this.status);
+    }
 }

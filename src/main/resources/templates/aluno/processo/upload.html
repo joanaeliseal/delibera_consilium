@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::section})}">
+<body>
+<section>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-pdf"></i> Anexar Requerimento</h5>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="mb-4 p-3 bg-light rounded border">
+                        <p class="mb-1"><strong>Protocolo:</strong> <span th:text="${processo.numero}"></span></p>
+                        <p class="mb-1"><strong>Assunto:</strong> <span th:text="${processo.assunto?.nome}"></span></p>
+                        <p class="mb-0"><strong>Status Atual:</strong> <span class="badge bg-info" th:text="${processo.status}"></span></p>
+                    </div>
+
+                    <div th:if="${processo.temRequerimentoPdf()}" class="alert alert-warning">
+                        <i class="bi bi-info-circle"></i> 
+                        <strong>Aviso:</strong> Este processo já possui um PDF anexado 
+                        (<span th:text="${processo.requerimentoPdfNome}"></span>). 
+                        O novo arquivo irá substituir o anterior.
+                    </div>
+
+                    <form th:action="@{/aluno/processos/{id}/upload(id=${processo.id})}" 
+                          method="post" 
+                          enctype="multipart/form-data">
+
+                        <div class="mb-4">
+                            <label for="pdfFile" class="form-label fw-bold">Arquivo (Somente PDF)</label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="pdfFile" 
+                                   name="pdfFile" 
+                                   accept="application/pdf" 
+                                   required>
+                            <div class="form-text">O arquivo não deve ultrapassar 5MB.</div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a th:href="@{/aluno/processos}" class="btn btn-outline-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-cloud-arrow-up"></i> Enviar Arquivo
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

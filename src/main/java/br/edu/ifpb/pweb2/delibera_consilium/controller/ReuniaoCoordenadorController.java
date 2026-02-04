@@ -210,7 +210,7 @@ public class ReuniaoCoordenadorController {
 
     /**
      * Julga um processo (REQFUNC 11)
-     */
+     *
     @PostMapping("/{reuniaoId}/julgar/{processoId}")
     public String julgarProcesso(@PathVariable Long reuniaoId,
                                   @PathVariable Long processoId,
@@ -224,6 +224,7 @@ public class ReuniaoCoordenadorController {
         }
         return "redirect:/coord/reunioes/" + reuniaoId + "/conduzir";
     }
+    */
 
     /**
      * Finaliza a sessao (REQFUNC 12)
