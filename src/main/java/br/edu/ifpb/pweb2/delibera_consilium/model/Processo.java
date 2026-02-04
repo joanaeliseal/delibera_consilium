@@ -29,14 +29,13 @@ public class Processo {
     @Lob
     private byte[] parecer;
     
-    // NOVO: Campo para armazenar o PDF do requerimento
-    @Lob
-    private byte[] requerimentoPdf;
-    
-    // NOVO: Nome do arquivo PDF original
-    private String requerimentoPdfNome;
-    
-    private String status; 
+    private String status;
+
+    // Resultado do julgamento: DEFERIDO, INDEFERIDO, RETIRADO_DE_PAUTA
+    private String resultado;
+
+    // Data em que o processo foi julgado
+    private LocalDate dataJulgamento;
 
     @ManyToOne
     @JoinColumn(name = "aluno_id")
@@ -59,15 +58,4 @@ public class Processo {
     @OneToMany(mappedBy = "processo")
     @ToString.Exclude
     private List<Voto> votos;
-    
-    // NOVO: Método auxiliar para verificar se tem PDF
-    public boolean temRequerimentoPdf() {
-        return requerimentoPdf != null && requerimentoPdf.length > 0;
-    }
-    
-    // NOVO: Método auxiliar para verificar se pode fazer upload
-    public boolean podeReceberUpload() {
-        // Só pode fazer upload se o processo ainda não foi distribuído
-        return !"DISTRIBUIDO".equals(status) && !"EM_PAUTA".equals(status) && !"JULGADO".equals(status);
-    }
 }

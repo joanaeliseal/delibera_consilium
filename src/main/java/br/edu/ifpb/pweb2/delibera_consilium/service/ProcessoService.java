@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional(readOnly = true) // ADICIONADO: Resolve erro de LOB ao ler processos
 public class ProcessoService {
 
     @Autowired
@@ -65,7 +64,6 @@ public class ProcessoService {
     }
 
     // logica pra criar um processo
-    @Transactional // ADICIONADO: Necessário para operações de escrita
     public Processo salvar(Processo processo) {
         // se for um processo novo (com id nulo)
         if (processo.getId() == null) {
@@ -81,7 +79,6 @@ public class ProcessoService {
     }
 
     // logica pra distribuir processo (REQFUNC 8)
-    @Transactional // ADICIONADO: Necessário para operações de escrita
     public void distribuirProcesso(Long idProcesso, Long idRelator) {
         Processo processo = this.buscarPorId(idProcesso);
         Professor relator = professorRepository.findById(idRelator).orElse(null);
@@ -120,5 +117,21 @@ public class ProcessoService {
         resultado.put("TOTAL", (long) votos.size());
 
         return resultado;
+    }
+
+    /**
+     * Julga um processo, definindo o resultado (REQFUNC 11)
+     * @param processoId ID do processo
+     * @param resultado DEFERIDO, INDEFERIDO ou RETIRADO_DE_PAUTA
+     */
+    @Transactional
+    public void julgarProcesso(Long processoId, String resultado) {
+        Processo processo = buscarPorId(processoId);
+        if (processo != null) {
+            processo.setResultado(resultado);
+            processo.setDataJulgamento(LocalDate.now());
+            processo.setStatus("JULGADO");
+            processoRepository.save(processo);
+        }
     }
 }

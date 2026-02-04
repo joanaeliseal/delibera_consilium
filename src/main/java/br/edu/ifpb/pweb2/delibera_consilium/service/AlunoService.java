@@ -23,13 +23,6 @@ public class AlunoService {
     public Aluno buscarPorMatricula(String matricula) {
         return alunoRepository.findByMatricula(matricula);
     }
-    
-    /**
-     * Busca aluno por login (usado para autenticação)
-     */
-    public Aluno buscarPorLogin(String login) {
-        return alunoRepository.findByLogin(login);
-    }
 
     public Aluno salvar(Aluno aluno) {
         return alunoRepository.save(aluno);
