@@ -3,9 +3,6 @@ package br.edu.ifpb.pweb2.delibera_consilium.controller;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
 import br.edu.ifpb.pweb2.delibera_consilium.service.ProfessorService;
 import jakarta.validation.Valid;
-
-import java.util.List;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,14 +24,7 @@ public class ProfessorController {
 
     @GetMapping
     public String listar(Model model) {
-        List<Professor> todos = service.listarTodos();
-        
-        // Filtra a lista para remover o usuário com login 'admin'
-        List<Professor> professoresFiltrados = todos.stream()
-                .filter(p -> !p.getLogin().equals("admin"))
-                .toList();
-
-        model.addAttribute("professores", professoresFiltrados);
+        model.addAttribute("professores", service.listarTodos());
         return "admin/professor/list";
     }
 

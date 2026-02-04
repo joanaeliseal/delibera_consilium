@@ -31,9 +31,9 @@ public class Processo {
     
     // NOVO: Campo para armazenar o PDF do requerimento
     @Lob
-    @Column(columnDefinition = "bytea")
     private byte[] requerimentoPdf;
-  
+    
+    // NOVO: Nome do arquivo PDF original
     private String requerimentoPdfNome;
     
     private String status; 
@@ -60,12 +60,14 @@ public class Processo {
     @ToString.Exclude
     private List<Voto> votos;
     
+    // NOVO: Método auxiliar para verificar se tem PDF
     public boolean temRequerimentoPdf() {
-        return this.requerimentoPdf != null && this.requerimentoPdf.length > 0;
+        return requerimentoPdf != null && requerimentoPdf.length > 0;
     }
     
+    // NOVO: Método auxiliar para verificar se pode fazer upload
     public boolean podeReceberUpload() {
-    // Só pode se o status for nulo (novo) ou "CRIADO"
-    return this.status == null || "CRIADO".equals(this.status);
+        // Só pode fazer upload se o processo ainda não foi distribuído
+        return !"DISTRIBUIDO".equals(status) && !"EM_PAUTA".equals(status) && !"JULGADO".equals(status);
     }
 }
