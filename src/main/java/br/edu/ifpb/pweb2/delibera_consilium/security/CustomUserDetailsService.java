@@ -4,8 +4,8 @@ import br.edu.ifpb.pweb2.delibera_consilium.model.Aluno;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.AlunoRepository;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.ProfessorRepository;
+import br.edu.ifpb.pweb2.delibera_consilium.repository.ColegiadoRepository; // Adicionado
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,12 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-/**
- * Serviço customizado para autenticação de usuários
- * Busca alunos e professores no banco de dados
- */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -29,73 +26,45 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private ProfessorRepository professorRepository;
 
-    /**
-     * Carrega o usuário pelo username (login)
-     * Primeiro tenta encontrar como Aluno, depois como Professor
-     */
+    @Autowired
+    private ColegiadoRepository colegiadoRepository; // Injetado para verificar coordenação
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         
-        // Tenta buscar como Aluno primeiro
+        // 1. Tenta buscar como Aluno
         Aluno aluno = alunoRepository.findByLogin(username);
         if (aluno != null) {
-            return buildUserDetails(aluno.getLogin(), aluno.getSenha(), "ROLE_ALUNO");
+            return new User(
+                aluno.getLogin(), 
+                aluno.getSenha(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_ALUNO"))
+            );
         }
-        
-        // Se não encontrou como Aluno, tenta como Professor
+
+        // 2. Tenta buscar como Professor
         Professor professor = professorRepository.findByLogin(username);
         if (professor != null) {
-            // Professor pode ter múltiplas roles
-            List<String> roles = new ArrayList<>();
-            roles.add("ROLE_PROFESSOR");
-            
-            // Se for coordenador, adiciona a role de coordenador também
-            if (professor.isCoordenador()) {
-                roles.add("ROLE_COORDENADOR");
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_PROFESSOR"));
+
+            // Verifica se o professor é COORDENADOR de algum colegiado
+            if (colegiadoRepository.findByCoordenador(professor).isPresent()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_COORDENADOR"));
             }
-            
-            return buildUserDetails(professor.getLogin(), professor.getSenha(), roles);
+
+            // Lógica para ADMIN: Se o login for "admin", adiciona a permissão
+            if (username.equalsIgnoreCase("admin")) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            }
+
+            return new User(
+                professor.getLogin(), 
+                professor.getSenha(), 
+                authorities
+            );
         }
-        
-        // Se não encontrou nem como Aluno nem como Professor
+
         throw new UsernameNotFoundException("Usuário não encontrado: " + username);
-    }
-    
-    /**
-     * Constrói o UserDetails com uma única role
-     */
-    private UserDetails buildUserDetails(String username, String password, String role) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role));
-        
-        return User.builder()
-                .username(username)
-                .password(password)
-                .authorities(authorities)
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .disabled(false)
-                .build();
-    }
-    
-    /**
-     * Constrói o UserDetails com múltiplas roles
-     */
-    private UserDetails buildUserDetails(String username, String password, List<String> roles) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
-        }
-        
-        return User.builder()
-                .username(username)
-                .password(password)
-                .authorities(authorities)
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .disabled(false)
-                .build();
     }
 }

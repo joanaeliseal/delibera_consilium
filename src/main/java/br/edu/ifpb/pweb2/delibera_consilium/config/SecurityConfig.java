@@ -1,10 +1,7 @@
 package br.edu.ifpb.pweb2.delibera_consilium.config;
 
-import br.edu.ifpb.pweb2.delibera_consilium.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,14 +12,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
-
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
-        this.customUserDetailsService = customUserDetailsService;
-    }
-
     /**
-     * Configura o encoder de senha usando BCrypt
+     * Define o algoritmo de criptografia. 
+     * O Spring Security usará este bean automaticamente para validar as senhas.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -30,63 +22,45 @@ public class SecurityConfig {
     }
 
     /**
-     * Configura o provider de autenticação usando nosso UserDetailsService customizado
-     */
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
-
-    /**
-     * Configuração de segurança HTTP
+     * Configuração de segurança HTTP.
+     * O Spring encontrará automaticamente seu CustomUserDetailsService por ser um @Service.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                // Recursos públicos (CSS, JS, imagens, página de login)
+                // Recursos estáticos e páginas públicas
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                .requestMatchers("/login", "/error").permitAll()
+                .requestMatchers("/login", "/error", "/acesso-negado").permitAll()
                 
-                // Rotas administrativas - apenas ADMIN
+                // Regras de Autorização baseadas em ROLE
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                
-                // Rotas do coordenador - apenas COORDENADOR
                 .requestMatchers("/coord/**").hasRole("COORDENADOR")
-                
-                // Rotas do professor - PROFESSOR ou COORDENADOR
                 .requestMatchers("/professor/**").hasAnyRole("PROFESSOR", "COORDENADOR")
-                
-                // Rotas do aluno - apenas ALUNO
                 .requestMatchers("/aluno/**").hasRole("ALUNO")
                 
-                // Qualquer outra requisição precisa estar autenticada
+                // Qualquer outra página exige apenas estar logado
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/dashboard", true)
-                .failureUrl("/login?error=true")
-                .usernameParameter("username")
-                .passwordParameter("password")
+                .defaultSuccessUrl("/home", true)
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout=true")
+                .logoutSuccessUrl("/login?logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            // CSRF habilitado (mais seguro)
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**") // Se usar H2 console
+            .exceptionHandling(handling -> handling
+                .accessDeniedPage("/acesso-negado")
             )
-            // Permite frames do mesmo domínio (para H2 console se necessário)
+            // Mantém proteção CSRF (padrão de segurança)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**") 
+            )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())
             );

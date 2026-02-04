@@ -8,30 +8,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 
-    /**
-     * Exibe a página de login
-     */
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error,
-                       @RequestParam(value = "logout", required = false) String logout,
-                       Model model) {
-        
+                        @RequestParam(value = "logout", required = false) String logout,
+                        Model model) {
         if (error != null) {
             model.addAttribute("errorMsg", "Usuário ou senha inválidos!");
         }
-        
         if (logout != null) {
             model.addAttribute("msg", "Você saiu do sistema com sucesso.");
         }
-        
         return "login";
     }
 
-    /**
-     * Página inicial - redireciona para o dashboard
-     */
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/dashboard";
+    @GetMapping("/acesso-negado")
+    public String acessoNegado() {
+        return "auth/acesso-negado"; 
     }
 }
