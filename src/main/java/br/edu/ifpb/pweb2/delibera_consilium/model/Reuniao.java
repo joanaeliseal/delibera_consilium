@@ -34,6 +34,14 @@ public class Reuniao {
     @JoinColumn(name = "colegiado_id")
     private Colegiado colegiado;
 
+    @ManyToMany
+    @JoinTable(
+        name = "reuniao_membros",
+        joinColumns = @JoinColumn(name = "reuniao_id"),
+        inverseJoinColumns = @JoinColumn(name = "professor_id")
+    )
+    private List<Professor> membros;
+
     // Processos que estao na pauta desta reuniao
     @OneToMany(mappedBy = "reuniao")
     private List<Processo> processosEmPauta;

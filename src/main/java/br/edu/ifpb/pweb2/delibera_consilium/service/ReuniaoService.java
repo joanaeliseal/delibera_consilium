@@ -1,5 +1,6 @@
 package br.edu.ifpb.pweb2.delibera_consilium.service;
 
+import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Processo;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Reuniao;
 import br.edu.ifpb.pweb2.delibera_consilium.model.StatusReuniao;
@@ -40,6 +41,10 @@ public class ReuniaoService {
         return reuniaoRepository.findByFiltros(status, colegiadoId);
     }
 
+    public List<Reuniao> listarPorMembro(Professor professor, StatusReuniao status) {
+        return reuniaoRepository.findByMembro(professor, status);
+    }
+
     public Reuniao buscarPorId(Long id) {
         return reuniaoRepository.findById(id).orElse(null);
     }
@@ -64,6 +69,9 @@ public class ReuniaoService {
     public Reuniao iniciarSessao(Long reuniaoId) {
         Reuniao reuniao = buscarPorId(reuniaoId);
         if (reuniao != null && reuniao.getStatus() == StatusReuniao.PROGRAMADA) {
+            if (reuniaoRepository.existsByStatus(StatusReuniao.EM_ANDAMENTO)) {
+                throw new RuntimeException("Já existe uma sessão em andamento");
+            }
             reuniao.setStatus(StatusReuniao.EM_ANDAMENTO);
             reuniao.setDataHoraInicio(LocalDateTime.now());
             return reuniaoRepository.save(reuniao);
