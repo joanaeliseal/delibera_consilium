@@ -4,9 +4,9 @@
 <body>
 <section>
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-calendar-event"></i> Reunioes do Colegiado</h2>
+        <h2><i class="bi bi-calendar-event"></i> Reuniões do Colegiado</h2>
         <a th:href="@{/coord/reunioes/nova}" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Nova Reuniao
+            <i class="bi bi-plus-lg"></i> Nova Reunião
         </a>
     </div>
 
@@ -53,7 +53,7 @@
                         <th>Colegiado</th>
                         <th>Status</th>
                         <th>Processos</th>
-                        <th>Acoes</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -118,7 +118,7 @@
                     <tr th:if="${#lists.isEmpty(reunioes)}">
                         <td colspan="6" class="text-center text-muted py-4">
                             <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                            Nenhuma reuniao encontrada.
+                            Nenhuma reunião encontrada.
                         </td>
                     </tr>
                 </tbody>

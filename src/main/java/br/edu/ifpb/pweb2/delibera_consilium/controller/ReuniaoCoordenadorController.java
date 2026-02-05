@@ -5,6 +5,7 @@ import br.edu.ifpb.pweb2.delibera_consilium.model.Reuniao;
 import br.edu.ifpb.pweb2.delibera_consilium.model.StatusReuniao;
 import br.edu.ifpb.pweb2.delibera_consilium.service.ColegiadoService;
 import br.edu.ifpb.pweb2.delibera_consilium.service.ProcessoService;
+import br.edu.ifpb.pweb2.delibera_consilium.service.ProfessorService;
 import br.edu.ifpb.pweb2.delibera_consilium.service.ReuniaoService;
 
 import java.util.HashMap;
@@ -23,13 +24,16 @@ public class ReuniaoCoordenadorController {
     private final ReuniaoService reuniaoService;
     private final ColegiadoService colegiadoService;
     private final ProcessoService processoService;
+    private final ProfessorService professorService;
 
     public ReuniaoCoordenadorController(ReuniaoService reuniaoService,
                                          ColegiadoService colegiadoService,
-                                         ProcessoService processoService) {
+                                         ProcessoService processoService,
+                                         ProfessorService professorService) {
         this.reuniaoService = reuniaoService;
         this.colegiadoService = colegiadoService;
         this.processoService = processoService;
+        this.professorService = professorService;
     }
 
     /**
@@ -65,11 +69,12 @@ public class ReuniaoCoordenadorController {
     public String nova(Model model) {
         model.addAttribute("reuniao", new Reuniao());
         model.addAttribute("colegiados", colegiadoService.listarTodos());
+        model.addAttribute("professores", professorService.listarTodos());
         return "coord/reuniao/form";
     }
 
     /**
-     * Formulario para editar reuniao existente
+     * Formulário para editar reuniao existente
      */
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model) {
@@ -79,6 +84,7 @@ public class ReuniaoCoordenadorController {
         }
         model.addAttribute("reuniao", reuniao);
         model.addAttribute("colegiados", colegiadoService.listarTodos());
+        model.addAttribute("professores", professorService.listarTodos());
         return "coord/reuniao/form";
     }
 
@@ -93,15 +99,16 @@ public class ReuniaoCoordenadorController {
 
         if (result.hasErrors()) {
             model.addAttribute("colegiados", colegiadoService.listarTodos());
+            model.addAttribute("professores", professorService.listarTodos());
             return "coord/reuniao/form";
         }
 
         if (reuniao.getId() == null) {
             reuniaoService.criarSessao(reuniao);
-            redirect.addFlashAttribute("msg", "Reuniao criada com sucesso!");
+            redirect.addFlashAttribute("msg", "Reunião criada com sucesso!");
         } else {
             reuniaoService.salvar(reuniao);
-            redirect.addFlashAttribute("msg", "Reuniao atualizada com sucesso!");
+            redirect.addFlashAttribute("msg", "Reunião atualizada com sucesso!");
         }
 
         return "redirect:/coord/reunioes";
@@ -114,9 +121,9 @@ public class ReuniaoCoordenadorController {
     public String excluir(@PathVariable Long id, RedirectAttributes redirect) {
         try {
             reuniaoService.excluir(id);
-            redirect.addFlashAttribute("msg", "Reuniao excluida com sucesso!");
+            redirect.addFlashAttribute("msg", "Reunião excluída com sucesso!");
         } catch (Exception e) {
-            redirect.addFlashAttribute("errorMsg", "Erro ao excluir reuniao: " + e.getMessage());
+            redirect.addFlashAttribute("errorMsg", "Erro ao excluir reunião: " + e.getMessage());
         }
         return "redirect:/coord/reunioes";
     }
@@ -162,21 +169,25 @@ public class ReuniaoCoordenadorController {
     }
 
     /**
-     * Inicia a sessao (REQFUNC 10)
+     * Inicia a sessao 
      */
     @PostMapping("/{id}/iniciar")
     public String iniciarSessao(@PathVariable Long id, RedirectAttributes redirect) {
-        Reuniao reuniao = reuniaoService.iniciarSessao(id);
-        if (reuniao != null && reuniao.getStatus() == StatusReuniao.EM_ANDAMENTO) {
-            redirect.addFlashAttribute("msg", "Sessao iniciada com sucesso!");
-            return "redirect:/coord/reunioes/" + id + "/conduzir";
+        try {
+            Reuniao reuniao = reuniaoService.iniciarSessao(id);
+            if (reuniao != null && reuniao.getStatus() == StatusReuniao.EM_ANDAMENTO) {
+                redirect.addFlashAttribute("msg", "Sessão iniciada com sucesso!");
+                return "redirect:/coord/reunioes/" + id + "/conduzir";
+            }
+            redirect.addFlashAttribute("errorMsg", "Não foi possível iniciar a sessão.");
+        } catch (Exception e) {
+            redirect.addFlashAttribute("errorMsg", e.getMessage());
         }
-        redirect.addFlashAttribute("errorMsg", "Nao foi possivel iniciar a sessao.");
         return "redirect:/coord/reunioes";
     }
 
     /**
-     * Pagina de conducao da sessao (REQFUNC 11)
+     * Pagina de conducao da sessao 
      */
     @GetMapping("/{id}/conduzir")
     public String conduzirSessao(@PathVariable Long id, Model model) {
@@ -209,33 +220,32 @@ public class ReuniaoCoordenadorController {
     }
 
     /**
-     * Julga um processo (REQFUNC 11)
-     *
+     * Julga um processo 
+     */
     @PostMapping("/{reuniaoId}/julgar/{processoId}")
     public String julgarProcesso(@PathVariable Long reuniaoId,
                                   @PathVariable Long processoId,
                                   @RequestParam String resultado,
                                   RedirectAttributes redirect) {
         try {
-            processoService.julgarProcesso(processoId, resultado);
-            redirect.addFlashAttribute("msg", "Processo julgado: " + resultado);
+            Processo processo = processoService.julgarProcesso(processoId, resultado);
+            redirect.addFlashAttribute("msg", "Processo julgado: " + processo.getResultado());
         } catch (Exception e) {
             redirect.addFlashAttribute("errorMsg", "Erro ao julgar processo: " + e.getMessage());
         }
         return "redirect:/coord/reunioes/" + reuniaoId + "/conduzir";
     }
-    */
 
     /**
-     * Finaliza a sessao (REQFUNC 12)
+     * Finaliza a sessao 
      */
     @PostMapping("/{id}/finalizar")
     public String finalizarSessao(@PathVariable Long id, RedirectAttributes redirect) {
         Reuniao reuniao = reuniaoService.finalizarSessao(id);
         if (reuniao != null && reuniao.getStatus() == StatusReuniao.ENCERRADA) {
-            redirect.addFlashAttribute("msg", "Sessao finalizada com sucesso!");
+            redirect.addFlashAttribute("msg", "Sessão finalizada com sucesso!");
         } else {
-            redirect.addFlashAttribute("errorMsg", "Nao foi possivel finalizar a sessao.");
+            redirect.addFlashAttribute("errorMsg", "Não foi possível finalizar a sessão.");
         }
         return "redirect:/coord/reunioes";
     }

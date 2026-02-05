@@ -3,6 +3,7 @@ package br.edu.ifpb.pweb2.delibera_consilium.service;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Aluno;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Processo;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Professor;
+import br.edu.ifpb.pweb2.delibera_consilium.model.TipoDecisao;
 import br.edu.ifpb.pweb2.delibera_consilium.model.TipoVoto;
 import br.edu.ifpb.pweb2.delibera_consilium.model.Voto;
 import br.edu.ifpb.pweb2.delibera_consilium.repository.ProcessoRepository;
@@ -103,6 +104,71 @@ public class ProcessoService {
             processo.setStatus("DISTRIBUIDO");
             processoRepository.save(processo);
         }
+    }
+
+    /**
+     * Julga um processo com cálculo automático do resultado por maioria (REQFUNC 11)
+     *
+     * Lógica: Se o relator votou pelo deferimento (ou indeferimento) e a maioria
+     * dos membros votou COM_RELATOR, o processo segue a decisão do relator.
+     * Se a maioria votou DIVERGENTE, o resultado é o oposto da decisão do relator.
+     */
+    @Transactional
+    public Processo julgarProcesso(Long processoId, String resultado) {
+        Processo processo = processoRepository.findById(processoId)
+                .orElseThrow(() -> new RuntimeException("Processo não encontrado"));
+
+        if ("JULGADO".equals(processo.getStatus())) {
+            throw new RuntimeException("Processo já foi julgado");
+        }
+
+        if ("RETIRADO_DE_PAUTA".equals(resultado)) {
+            processo.setResultado("RETIRADO_DE_PAUTA");
+        } else {
+            // Calcula automaticamente baseado na maioria de votos e decisão do relator
+            Map<String, Long> votos = contarVotos(processoId);
+            long comRelator = votos.get("COM_RELATOR");
+            long divergente = votos.get("DIVERGENTE");
+
+            // Verifica se a maioria votou com o relator
+            boolean maioriaComRelator = comRelator >= divergente;
+
+            // Verifica a decisão do relator (se não definida, assume DEFERIMENTO)
+            TipoDecisao decisaoRelator = processo.getDecisaoRelator();
+            if (decisaoRelator == null) {
+                decisaoRelator = TipoDecisao.DEFERIMENTO;
+            }
+
+            // Calcula o resultado baseado na maioria e na decisão do relator
+            if (maioriaComRelator) {
+                // Maioria concorda com o relator -> segue a decisão do relator
+                processo.setResultado(decisaoRelator == TipoDecisao.DEFERIMENTO ? "DEFERIDO" : "INDEFERIDO");
+            } else {
+                // Maioria diverge do relator -> resultado oposto à decisão do relator
+                processo.setResultado(decisaoRelator == TipoDecisao.DEFERIMENTO ? "INDEFERIDO" : "DEFERIDO");
+            }
+        }
+
+        processo.setStatus("JULGADO");
+        processo.setDataJulgamento(LocalDate.now());
+        return processoRepository.save(processo);
+    }
+
+    /**
+     * Registra a decisão do relator (DEFERIMENTO ou INDEFERIMENTO)
+     * O relator deve registrar sua decisão antes do julgamento pelo colegiado
+     */
+    @Transactional
+    public Processo registrarDecisaoRelator(Long processoId, TipoDecisao decisao) {
+        Processo processo = processoRepository.findById(processoId)
+                .orElseThrow(() -> new RuntimeException("Processo não encontrado"));
+
+        if (!"DISTRIBUIDO".equals(processo.getStatus())) {
+            throw new RuntimeException("Processo deve estar distribuído para registrar decisão do relator");
+        }
+
+        processo.setDecisaoRelator(decisao);
+        return processoRepository.save(processo);
     }
 
     /**

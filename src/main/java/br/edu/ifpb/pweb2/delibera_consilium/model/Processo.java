@@ -15,11 +15,11 @@ public class Processo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true) 
+    @Column(unique = true)
     private String numero;
 
     @NotBlank(message = "O texto do requerimento é obrigatório")
-    @Column(columnDefinition = "TEXT") 
+    @Column(columnDefinition = "TEXT")
     private String textoRequerimento;
 
     private LocalDate dataRecepcao;
@@ -31,10 +31,18 @@ public class Processo {
 
     @Column(name = "requerimento_pdf", columnDefinition = "bytea")
     private byte[] requerimentoPdf;
-  
+
     private String requerimentoPdfNome;
-    
-    private String status; 
+
+    private String status;
+
+    private String resultado;
+
+    private LocalDate dataJulgamento;
+
+    // Decisao do relator: DEFERIMENTO ou INDEFERIMENTO (REQFUNC 11)
+    @Enumerated(EnumType.STRING)
+    private TipoDecisao decisaoRelator;
 
     @ManyToOne
     @JoinColumn(name = "aluno_id")
