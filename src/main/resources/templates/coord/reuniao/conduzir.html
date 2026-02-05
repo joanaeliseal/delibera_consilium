@@ -17,7 +17,7 @@
             <form th:action="@{/coord/reunioes/{id}/finalizar(id=${reuniao.id})}" method="post" class="d-inline">
                 <button type="submit" class="btn btn-danger"
                         th:disabled="${totalJulgados < totalProcessos}"
-                        onclick="return confirm('Deseja finalizar esta sessao? Esta acao nao pode ser desfeita.')">
+                        onclick="return confirm('Deseja finalizar esta sessão? Esta ação não pode ser desfeita!')">
                     <i class="bi bi-stop-fill"></i> Finalizar Sessão
                 </button>
             </form>
