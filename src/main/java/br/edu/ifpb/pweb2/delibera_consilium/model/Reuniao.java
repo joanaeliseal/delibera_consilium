@@ -45,4 +45,4 @@ public class Reuniao {
     // Processos que estao na pauta desta reuniao
     @OneToMany(mappedBy = "reuniao")
     private List<Processo> processosEmPauta;
-}
+} 

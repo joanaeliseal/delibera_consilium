@@ -74,7 +74,7 @@ public class ReuniaoCoordenadorController {
     }
 
     /**
-     * Formulario para editar reuniao existente
+     * Formulário para editar reuniao existente
      */
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model) {
@@ -169,7 +169,7 @@ public class ReuniaoCoordenadorController {
     }
 
     /**
-     * Inicia a sessao (REQFUNC 10)
+     * Inicia a sessao 
      */
     @PostMapping("/{id}/iniciar")
     public String iniciarSessao(@PathVariable Long id, RedirectAttributes redirect) {
@@ -187,7 +187,7 @@ public class ReuniaoCoordenadorController {
     }
 
     /**
-     * Pagina de conducao da sessao (REQFUNC 11)
+     * Pagina de conducao da sessao 
      */
     @GetMapping("/{id}/conduzir")
     public String conduzirSessao(@PathVariable Long id, Model model) {
@@ -220,7 +220,7 @@ public class ReuniaoCoordenadorController {
     }
 
     /**
-     * Julga um processo (REQFUNC 11)
+     * Julga um processo 
      */
     @PostMapping("/{reuniaoId}/julgar/{processoId}")
     public String julgarProcesso(@PathVariable Long reuniaoId,
@@ -237,7 +237,7 @@ public class ReuniaoCoordenadorController {
     }
 
     /**
-     * Finaliza a sessao (REQFUNC 12)
+     * Finaliza a sessao 
      */
     @PostMapping("/{id}/finalizar")
     public String finalizarSessao(@PathVariable Long id, RedirectAttributes redirect) {
