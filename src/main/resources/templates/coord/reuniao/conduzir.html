@@ -99,6 +99,15 @@
                                             <th>Relator:</th>
                                             <td th:text="${p.relator?.nome}"></td>
                                         </tr>
+                                        <tr>
+                                            <th>Decisão do Relator:</th>
+                                            <td>
+                                                <span th:if="${p.decisaoRelator != null}"
+                                                      th:class="${p.decisaoRelator.name() == 'DEFERIMENTO'} ? 'badge bg-success' : 'badge bg-danger'"
+                                                      th:text="${p.decisaoRelator}"></span>
+                                                <span th:if="${p.decisaoRelator == null}" class="badge bg-secondary">Não informada</span>
+                                            </td>
+                                        </tr>
                                     </table>
 
                                     <!-- Texto do Requerimento -->
