@@ -1,206 +1,233 @@
 # Delibera Consilium
 
-## 📋 Contexto do Projeto
+Sistema de gerenciamento de processos e deliberações para colegiados acadêmicos.
 
-**Delibera Consilium** é uma aplicação web desenvolvida como projeto acadêmico para a disciplina de **Programação Web II (PWEB2)** do Instituto Federal de Educação, Ciência e Tecnologia da Paraíba (IFPB).
+## Contexto do Projeto
 
-O nome "Delibera Consilium" é uma expressão em latim que significa "Deliberação do Conselho", refletindo o propósito da aplicação de gerenciar discussões e deliberações em ambientes colaborativos.
+**Delibera Consilium** é uma aplicação web desenvolvida como projeto acadêmico para a disciplina de **Programacao Web II (PWEB2)** do Instituto Federal de Educacao, Ciencia e Tecnologia da Paraiba (IFPB).
 
-## 🚀 Tecnologias Utilizadas
+O nome "Delibera Consilium" e uma expressao em latim que significa "Deliberacao do Conselho", refletindo o proposito da aplicacao de gerenciar o fluxo de julgamento de processos em colegiados de professores.
 
-- **Java 17**: Linguagem de programação principal
-- **Spring Boot 3.5.7**: Framework para desenvolvimento de aplicações web
-- **Spring Web**: Módulo para construção de APIs e aplicações web
-- **PostgreSQL**: Sistema de gerenciamento de banco de dados
-- **Lombok**: Biblioteca para redução de boilerplate code
-- **Maven**: Ferramenta de gerenciamento de dependências e construção do projeto
+## Tecnologias Utilizadas
 
-## 📁 Estrutura do Projeto
+| Tecnologia | Versao | Proposito |
+|------------|--------|-----------|
+| Java | 17 | Linguagem de programacao |
+| Spring Boot | 3.5.7 | Framework principal |
+| Spring Data JPA | - | Persistencia de dados |
+| Spring Security | 6.x | Autenticacao e autorizacao |
+| Thymeleaf | 3.x | Template engine |
+| PostgreSQL | 42.x | Banco de dados |
+| Bootstrap | 5.3 | Framework CSS |
+| Lombok | - | Reducao de boilerplate |
+| Maven | 3.6+ | Gerenciamento de build |
+
+## Funcionalidades
+
+### Perfis de Usuario
+
+| Perfil | Funcionalidades |
+|--------|-----------------|
+| **Admin** | CRUD de alunos, professores, assuntos e colegiados |
+| **Coordenador** | Distribuir processos, gerenciar reunioes, conduzir sessoes, julgar processos |
+| **Professor** | Visualizar processos atribuidos, votar, consultar reunioes |
+| **Aluno** | Criar processos, fazer upload de PDF, acompanhar andamento |
+
+### Fluxo Principal
+
+```
+1. Aluno cria processo com requerimento
+           |
+2. Coordenador distribui para um relator
+           |
+3. Relator registra sua decisao (DEFERIMENTO/INDEFERIMENTO)
+           |
+4. Membros do colegiado votam (COM_RELATOR/DIVERGENTE)
+           |
+5. Coordenador cria sessao e define pauta
+           |
+6. Coordenador conduz sessao e julga processos
+           |
+7. Sistema calcula resultado automaticamente pela maioria
+```
+
+## Estrutura do Projeto
 
 ```
 delibera_consilium/
-├── src/
-│   ├── main/
-│   │   ├── java/br/edu/ifpb/pweb2/delibera_consilium/
-│   │   │   ├── DeliberaConsiliumApplication.java
-│   │   │   ├── controller/ # Controladores REST/MVC
-│   │   │   │   ├── AlunoController.java
-│   │   │   │   ├── AssuntoController.java
-│   │   │   │   ├── ColegiadoController.java
-│   │   │   │   ├── ProcessoAlunoController.java
-│   │   │   │   ├── ProcessoCoordenadorController.java
-│   │   │   │   ├── ProcessoProfessorController.java
-│   │   │   │   └── ProfessorController.java
-│   │   │   ├── model/ # Entidades e modelos de dados
-│   │   │   │   ├── Aluno.java
-│   │   │   │   ├── Assunto.java
-│   │   │   │   ├── Colegiado.java
-│   │   │   │   ├── Processo.java
-│   │   │   │   ├── Professor.java
-│   │   │   │   ├── Reuniao.java
-│   │   │   │   ├── StatusReuniao.java
-│   │   │   │   ├── TipoDecisao.java
-│   │   │   │   ├── TipoVoto.java
-│   │   │   │   └── Voto.java
-│   │   │   ├── repository/  # Camada de acesso a dados
-│   │   │   │   ├── AlunoRepository.java
-│   │   │   │   ├── AssuntoRepository.java
-│   │   │   │   ├── ColegiadoRepository.java
-│   │   │   │   ├── ProcessoRepository.java
-│   │   │   │   ├── ProfessorRepository.java
-│   │   │   │   ├── ReuniaoRepository.java
-│   │   │   │   └── VotoRepository.java
-│   │   │   ├── service/  # Lógica de negócio
-│   │   │   │   ├── AlunoService.java
-│   │   │   │   ├── AssuntoService.java
-│   │   │   │   ├── ColegiadoService.java
-│   │   │   │   ├── ProcessoService.java
-│   │   │   │   └── ProfessorService.java
-│   │   │   └── validator/ # Lógica de validação da matrícula
-│   │   │       ├── Matricula.java
-│   │   │       └── MatriculaValidator.java
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       ├── static/ # Arquivos CSS, JS, imagens 
-│   │       └── templates/ # Templates HTML (Thymeleaf)
-│   │           ├── layout.html
-│   │           ├── admin/
-│   │           │   ├── aluno/
-│   │           │   │   ├── form.html
-│   │           │   │   └── list.html
-│   │           │   ├── assunto/
-│   │           │   │   ├── form.html
-│   │           │   │   └── list.html
-│   │           │   ├── colegiado/
-│   │           │   │   ├── form.html
-│   │           │   │   └── list.html
-│   │           │   └── professor/
-│   │           │       ├── form.html
-│   │           │       └── list.html
-│   │           ├── aluno/
-│   │           │   └── processo/
-│   │           │       ├── form.html
-│   │           │       └── list.html
-│   │           ├── coord/
-│   │           │   └── processo/
-│   │           │       └── list.html
-│   │           └── professor/
-│   │               └── processo/
-│   │                   └── list.html
-│   └── test/
-│       └── java/br/edu/ifpb/pweb2/delibera_consilium/
-│           └── DeliberaConsiliumApplicationTests.java
-├── pom.xml             # Arquivo de configuração Maven
-└── README.md
+├── src/main/java/br/edu/ifpb/pweb2/delibera_consilium/
+│   ├── config/
+│   │   ├── DataInitializer.java      # Dados iniciais
+│   │   ├── SecurityConfig.java       # Configuracao Spring Security
+│   │   └── WebConfig.java            # Converters do Spring MVC
+│   ├── controller/
+│   │   ├── AlunoController.java           # CRUD Alunos (Admin)
+│   │   ├── AssuntoController.java         # CRUD Assuntos (Admin)
+│   │   ├── AuthController.java            # Login/Logout
+│   │   ├── ColegiadoController.java       # CRUD Colegiados (Admin)
+│   │   ├── HomeController.java            # Pagina inicial
+│   │   ├── ProcessoAlunoController.java   # Processos (Aluno)
+│   │   ├── ProcessoCoordenadorController.java  # Processos (Coordenador)
+│   │   ├── ProcessoProfessorController.java    # Processos (Professor)
+│   │   ├── ProfessorController.java       # CRUD Professores (Admin)
+│   │   ├── ReuniaoCoordenadorController.java   # Reunioes (Coordenador)
+│   │   ├── ReuniaoProfessorController.java     # Reunioes (Professor)
+│   │   └── VotoProfessorController.java        # Votacao (Professor)
+│   ├── model/
+│   │   ├── Aluno.java
+│   │   ├── Assunto.java
+│   │   ├── Colegiado.java
+│   │   ├── Processo.java
+│   │   ├── Professor.java
+│   │   ├── Reuniao.java
+│   │   ├── StatusReuniao.java    # PROGRAMADA, EM_ANDAMENTO, ENCERRADA
+│   │   ├── TipoDecisao.java      # DEFERIMENTO, INDEFERIMENTO
+│   │   ├── TipoVoto.java         # COM_RELATOR, DIVERGENTE
+│   │   └── Voto.java
+│   ├── repository/
+│   │   ├── AlunoRepository.java
+│   │   ├── AssuntoRepository.java
+│   │   ├── ColegiadoRepository.java
+│   │   ├── ProcessoRepository.java
+│   │   ├── ProfessorRepository.java
+│   │   ├── ReuniaoRepository.java
+│   │   └── VotoRepository.java
+│   ├── security/
+│   │   ├── CustomUserDetailsService.java
+│   │   └── SecurityUtils.java
+│   ├── service/
+│   │   ├── AlunoService.java
+│   │   ├── AssuntoService.java
+│   │   ├── ColegiadoService.java
+│   │   ├── ProcessoService.java
+│   │   ├── ProfessorService.java
+│   │   ├── ReuniaoService.java
+│   │   └── VotoService.java
+│   └── validator/
+│       ├── Matricula.java            # Anotacao customizada
+│       └── MatriculaValidator.java   # Validador de matricula
+├── src/main/resources/
+│   ├── application.properties
+│   └── templates/
+│       ├── layout.html
+│       ├── fragments/
+│       │   ├── navbar.html
+│       │   ├── footer.html
+│       │   ├── alerts.html
+│       │   └── pagination.html
+│       ├── admin/
+│       │   ├── aluno/
+│       │   ├── assunto/
+│       │   ├── colegiado/
+│       │   └── professor/
+│       ├── aluno/
+│       │   └── processo/
+│       ├── coord/
+│       │   ├── processo/
+│       │   └── reuniao/
+│       └── professor/
+│           ├── processo/
+│           ├── reuniao/
+│           └── voto/
+├── docs/
+│   ├── Projeto Collegialis.pdf       # Especificacao do projeto
+│   ├── arquitetura-projeto.md        # Documentacao da arquitetura
+│   ├── etapa2-implementacao.md       # Detalhes da Etapa II
+│   └── relatorio-analise-erros-etapa2.md  # Analise e correcoes
+└── pom.xml
 ```
 
-## 🏗️ Arquitetura
+## Configuracao e Execucao
 
-O projeto segue a arquitetura em camadas:
+### Pre-requisitos
 
-- **Controller**: Responsável por receber requisições HTTP e coordenar as respostas
-- **Service**: Contém a lógica de negócio da aplicação
-- **Repository**: Gerencia a persistência de dados no banco de dados
-- **Model**: Define as entidades e estruturas de dados
-
-## 🧭 Controladores (controller)
-
-Breve lista dos controllers do projeto e sua responsabilidade principal (sem detalhar rotas):
-
-- `AlunoController.java` — gerencia operações administrativas relacionadas a alunos (CRUD, formulários).
-- `ProfessorController.java` — gerencia operações administrativas relacionadas a professores (CRUD, formulários).
-- `AssuntoController.java` — gerencia assuntos/pautas usados em processos.
-- `ColegiadoController.java` — gerencia colegiados e associação de professores como membros.
-- `ProcessoAlunoController.java` — funcionalidades para alunos criarem/visualizarem seus processos.
-- `ProcessoProfessorController.java` — visão e ações relacionadas a processos atribuídos a um professor (relator).
-- `ProcessoCoordenadorController.java` — visão do coordenador para listar e distribuir processos entre professores.
-
-## 🧭 Entidades principais (model)
-
-- `Aluno.java`: representa um aluno com dados pessoais e matrícula.
-- `Professor.java`: representa um professor que participa das reuniões e processos.
-- `Colegiado.java`: representa o colegiado (conselho) que delibera sobre processos.
-- `Assunto.java`: tópico ou pauta que pode compor uma reunião ou processo.
-- `Processo.java`: registro de um processo submetido ao colegiado para deliberação.
-- `Reuniao.java`: representa uma reunião do colegiado, com data, pauta e participantes.
-- `StatusReuniao.java`: enum com os estados possíveis de uma reunião (por exemplo: AGENDADA, REALIZADA, CANCELADA).
-- `TipoDecisao.java`: enum que descreve tipos de decisão adotados pelo colegiado.
-- `TipoVoto.java`: enum com tipos de voto possíveis (por exemplo: FAVOR, CONTRA, ABSTENCAO).
-- `Voto.java`: representa o voto de um participante em um processo ou item de pauta.
-
-## 📦 Repositórios (repository)
-
-As interfaces em `repository/` são responsáveis pela persistência dos dados e, normalmente, estendem `JpaRepository` ou outra interface do Spring Data. Arquivos atuais:
-
-- `AlunoRepository.java`
-- `ProfessorRepository.java`
-- `ColegiadoRepository.java`
-- `AssuntoRepository.java`
-- `ProcessoRepository.java`
-- `ReuniaoRepository.java`
-- `VotoRepository.java`
-
-## 🛠️ Serviços (service)
-
-As classes em `service/` encapsulam a lógica de negócio e orquestram chamadas aos repositórios. Elas são usadas pelos controllers para manter a aplicação organizada e testável. Serviços atuais:
-
-- `AlunoService.java`
-- `ProfessorService.java`
-- `ColegiadoService.java`
-- `AssuntoService.java`
-- `ProcessoService.java`
-
-## 🔧 Configuração e Execução
-
-### Pré-requisitos
-
-- Java 21 ou superior instalado
-- PostgreSQL configurado e em execução
+- Java 17 ou superior
+- PostgreSQL configurado e em execucao
 - Maven 3.6 ou superior
 
-### Instalação
+### Instalacao
 
-1. Clone o repositório:
+1. Clone o repositorio:
 ```bash
 git clone https://github.com/joanaeliseal/delibera_consilium.git
 cd delibera_consilium
 ```
 
-2. Configure o banco de dados no arquivo `src/main/resources/application.properties`:
+2. Crie o banco de dados:
+```sql
+CREATE DATABASE delibera_consilium;
+```
+
+3. Configure o banco de dados em `src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/delibera_consilium
 spring.datasource.username=seu_usuario
 spring.datasource.password=sua_senha
 ```
 
-### Crie seu banco de dados
-1. Abra seu gerenciador de banco de dados ou terminal.
-2. Crie um banco de dados vazio com o nome do projeto:
-```properties
-CREATE DATABASE delibera_consilium;
-```
-
-3. Compile e execute o projeto:
+4. Compile e execute:
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
 
-A aplicação estará disponível em `http://localhost:8080`
+5. Acesse: `http://localhost:8080`
 
-## 📝 Notas Importantes
+### Usuarios Padrao (DataInitializer)
 
-- Este é um projeto acadêmico em desenvolvimento
-- A versão atual é `0.0.1-SNAPSHOT`
-- Contribuições e melhorias são bem-vindas
+| Usuario | Senha | Perfil |
+|---------|-------|--------|
+| admin | admin | ADMIN |
+| coordenador | 123 | COORDENADOR |
+| professor | 123 | PROFESSOR |
+| aluno | 123 | ALUNO |
 
-## 👤 Autor
+## Requisitos Implementados
+
+### Etapa II - 100/100 pontos
+
+| Requisito | Descricao | Status |
+|-----------|-----------|:------:|
+| REQFUNC 4 | Professor consulta reunioes com filtro | ✅ |
+| REQFUNC 5 | Professor vota com justificativa | ✅ |
+| REQFUNC 6 | Professor ve reunioes onde foi escalado | ✅ |
+| REQFUNC 9 | Coordenador cria sessao, pauta e membros | ✅ |
+| REQFUNC 10 | Coordenador inicia sessao (unica) | ✅ |
+| REQFUNC 11 | Coordenador apregoa e julga (calculo automatico) | ✅ |
+| REQFUNC 12 | Coordenador finaliza sessao | ✅ |
+| REQFUNC 16 | Upload PDF do requerimento | ✅ |
+| REQNAOFUNC 7 | Layouts e fragmentos Thymeleaf | ✅ |
+| REQNAOFUNC 8 | Autenticacao/Autorizacao Spring Security | ✅ |
+| REQNAOFUNC 9 | Paginacao com reflexo no banco | ✅ |
+| REQNAOFUNC 10 | Anotacao customizada @Matricula | ✅ |
+
+## Arquitetura
+
+O projeto segue o padrao **MVC (Model-View-Controller)** com arquitetura em camadas:
+
+```
+Browser (HTML/CSS/JS)
+        ↓
+Spring Security (Autenticacao/Autorizacao)
+        ↓
+Controllers (Requisicoes HTTP)
+        ↓
+Services (Logica de negocio)
+        ↓
+Repositories (Spring Data JPA)
+        ↓
+PostgreSQL (Banco de dados)
+```
+
+## Autores
 
 Desenvolvido por: **Felipe de Brito** e **Joana Elise**
 
-Disciplina: Programação Web II (PWEB2)
-Instituição: IFPB (Instituto Federal de Educação, Ciência e Tecnologia da Paraíba)
+Disciplina: Programacao para Web II (PWEB2)
+Instituicao: IFPB - Instituto Federal de Educacao, Ciencia e Tecnologia da Paraiba
+Professor: Frederico Costa Guedes Pereira
+Periodo: 2025.2
 
-## 📄 Licença
+## Licenca
 
-Este projeto é disponibilizado sob licença aberta. Consulte o arquivo LICENSE para mais detalhes.
+Este projeto e disponibilizado sob licenca aberta para fins academicos.
