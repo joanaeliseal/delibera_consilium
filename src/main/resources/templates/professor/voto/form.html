@@ -49,6 +49,41 @@
         </div>
     </div>
 
+    <!-- Decisao do Relator (apenas visivel para o relator) -->
+    <div th:if="${isRelator}" class="card shadow-sm mb-4 border-warning">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0"><i class="bi bi-star-fill"></i> Decisão do Relator</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Como relator deste processo, você deve informar sua decisão (deferimento ou indeferimento).</p>
+
+            <div th:if="${processo.decisaoRelator != null}" class="alert alert-success">
+                <i class="bi bi-check-circle"></i> Sua decisão atual:
+                <strong th:text="${processo.decisaoRelator}"></strong>
+            </div>
+
+            <form th:action="@{/professor/votos/decisao-relator}" method="post" class="row g-3 align-items-end">
+                <input type="hidden" name="processoId" th:value="${processo.id}">
+                <div class="col-md-6">
+                    <label for="decisao" class="form-label">Sua Decisão *</label>
+                    <select class="form-select" id="decisao" name="decisao" required>
+                        <option value="">Selecione...</option>
+                        <option th:each="tipo : ${tiposDecisao}"
+                                th:value="${tipo}"
+                                th:text="${tipo}"
+                                th:selected="${processo.decisaoRelator == tipo}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-check-lg"></i> Registrar Decisão
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Formulario de Voto -->
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-success text-white">
