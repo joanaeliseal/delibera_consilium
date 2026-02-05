@@ -1,10 +1,12 @@
 package br.edu.ifpb.pweb2.delibera_consilium.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank; 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.ToString;
 import java.util.List;
+
+import br.edu.ifpb.pweb2.delibera_consilium.validator.Matricula;
 
 @Data
 @Entity
@@ -19,6 +21,7 @@ public class Professor {
     private String fone;
 
     @NotBlank(message = "A matrícula é obrigatória")
+    @Matricula(message = "Matrícula deve conter apenas números (mínimo 8 dígitos)")
     private String matricula;
 
     @NotBlank(message = "O login é obrigatório")

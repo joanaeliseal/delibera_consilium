@@ -5,7 +5,7 @@
 <section>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2><i class="bi bi-list-check"></i> Pauta da Reuniao</h2>
+            <h2><i class="bi bi-list-check"></i> Pauta da Reunião</h2>
             <p class="text-muted mb-0">
                 Data: <strong th:text="${#temporals.format(reuniao.dataReuniao, 'dd/MM/yyyy')}"></strong> |
                 Colegiado: <strong th:text="${reuniao.colegiado?.curso}"></strong>
@@ -31,7 +31,7 @@
                                 <th>Aluno</th>
                                 <th>Assunto</th>
                                 <th>Relator</th>
-                                <th>Acao</th>
+                                <th>Ação</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -69,7 +69,7 @@
         <div class="col-md-5">
             <div class="card">
                 <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Processos Disponiveis</h5>
+                    <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Processos Disponíveis</h5>
                 </div>
                 <div class="card-body p-0">
                     <table class="table table-hover mb-0">
@@ -77,7 +77,7 @@
                             <tr>
                                 <th>Protocolo</th>
                                 <th>Assunto</th>
-                                <th>Acao</th>
+                                <th>Ação</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -97,7 +97,7 @@
                             <tr th:if="${processosDisponiveis == null || processosDisponiveis.isEmpty()}">
                                 <td colspan="3" class="text-center text-muted py-4">
                                     <i class="bi bi-check-circle fs-3 d-block mb-2"></i>
-                                    Nenhum processo disponivel.
+                                    Nenhum processo disponível.
                                 </td>
                             </tr>
                         </tbody>
@@ -105,7 +105,7 @@
                 </div>
                 <div class="card-footer">
                     <small class="text-muted">
-                        Processos com status "Distribuido" que nao estao em nenhuma reuniao.
+                        Processos com status "Distribuído" que não estão em nenhuma reunião.
                     </small>
                 </div>
             </div>

@@ -9,8 +9,8 @@
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
                         <i class="bi bi-calendar-plus"></i>
-                        <span th:if="${reuniao.id == null}">Nova Reuniao</span>
-                        <span th:if="${reuniao.id != null}">Editar Reuniao</span>
+                        <span th:if="${reuniao.id == null}">Nova Reunião</span>
+                        <span th:if="${reuniao.id != null}">Editar Reunião</span>
                     </h4>
                 </div>
                 <div class="card-body">
@@ -19,7 +19,7 @@
                         <input type="hidden" th:field="*{status}" th:if="${reuniao.id != null}" />
 
                         <div class="mb-3">
-                            <label for="dataReuniao" class="form-label">Data da Reuniao *</label>
+                            <label for="dataReuniao" class="form-label">Data da Reunião *</label>
                             <input type="date" class="form-control" th:field="*{dataReuniao}"
                                    th:classappend="${#fields.hasErrors('dataReuniao')} ? 'is-invalid'" />
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('dataReuniao')}"
@@ -36,6 +36,16 @@
                             </select>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('colegiado')}"
                                  th:errors="*{colegiado}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="membros" class="form-label">Membros da Sessão</label>
+                            <select class="form-select" name="membros" id="membros" multiple>
+                                <option th:each="p : ${professores}" th:value="${p.id}"
+                                        th:text="${p.nome + ' (' + p.matricula + ')' }"
+                                        th:selected="${reuniao.membros != null and #lists.contains(reuniao.membros, p)}"></option>
+                            </select>
+                            <div class="form-text">Selecione os professores que participarão desta sessão</div>
                         </div>
 
                         <div class="d-flex justify-content-between">

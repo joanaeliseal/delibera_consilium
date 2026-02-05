@@ -34,7 +34,11 @@ public class Processo {
   
     private String requerimentoPdfNome;
     
-    private String status; 
+    private String status;
+
+    private String resultado;
+
+    private LocalDate dataJulgamento;
 
     @ManyToOne
     @JoinColumn(name = "aluno_id")

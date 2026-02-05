@@ -106,6 +106,33 @@ public class ProcessoService {
     }
 
     /**
+     * Julga um processo com cálculo automático do resultado por maioria (REQFUNC 11)
+     */
+    @Transactional
+    public Processo julgarProcesso(Long processoId, String resultado) {
+        Processo processo = processoRepository.findById(processoId)
+                .orElseThrow(() -> new RuntimeException("Processo não encontrado"));
+
+        if ("JULGADO".equals(processo.getStatus())) {
+            throw new RuntimeException("Processo já foi julgado");
+        }
+
+        if ("RETIRADO_DE_PAUTA".equals(resultado)) {
+            processo.setResultado("RETIRADO_DE_PAUTA");
+        } else {
+            // Calcula automaticamente baseado na maioria de votos
+            Map<String, Long> votos = contarVotos(processoId);
+            long comRelator = votos.get("COM_RELATOR");
+            long divergente = votos.get("DIVERGENTE");
+            processo.setResultado(comRelator >= divergente ? "DEFERIDO" : "INDEFERIDO");
+        }
+
+        processo.setStatus("JULGADO");
+        processo.setDataJulgamento(LocalDate.now());
+        return processoRepository.save(processo);
+    }
+
+    /**
      * Conta os votos de um processo (REQFUNC 11)
      * @return Map com contagem: {"COM_RELATOR": x, "DIVERGENTE": y, "AUSENTES": z}
      */
