@@ -3,8 +3,8 @@
 <body>
 <section>
     <div class="mb-3">
-        <h2><i class="bi bi-calendar-event"></i> Reunioes do Colegiado</h2>
-        <p class="text-muted">Consulte as reunioes programadas e encerradas.</p>
+        <h2><i class="bi bi-calendar-event"></i> Reuniões do Colegiado</h2>
+        <p class="text-muted">Consulte as reuniões programadas e encerradas.</p>
     </div>
 
     <!-- Filtro por Status -->
@@ -54,10 +54,13 @@
                 <tr th:each="r : ${reunioes}">
                     <td th:text="${r.id}"></td>
                     <td th:text="${#temporals.format(r.dataReuniao, 'dd/MM/yyyy')}"></td>
-                    <td th:text="${r.colegiado?.nome}"></td>
+                    <td th:text="${r.colegiado?.curso}"></td>
                     <td>
                         <span th:if="${r.status.name() == 'PROGRAMADA'}" class="badge bg-warning text-dark">
                             <i class="bi bi-clock"></i> Programada
+                        </span>
+                        <span th:if="${r.status.name() == 'EM_ANDAMENTO'}" class="badge bg-primary">
+                            <i class="bi bi-play-circle"></i> Em Andamento
                         </span>
                         <span th:if="${r.status.name() == 'ENCERRADA'}" class="badge bg-success">
                             <i class="bi bi-check-circle"></i> Encerrada
@@ -69,12 +72,12 @@
                     <td class="text-center">
                         <span th:if="${r.ata == null}" class="text-muted">-</span>
                         <span th:if="${r.ata != null}" class="badge bg-info">
-                            <i class="bi bi-file-earmark-pdf"></i> Disponivel
+                            <i class="bi bi-file-earmark-pdf"></i> Disponível
                         </span>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(reunioes)}">
-                    <td colspan="6" class="text-center text-muted py-3">Nenhuma reuniao encontrada.</td>
+                    <td colspan="6" class="text-center text-muted py-3">Nenhuma reunião encontrada.</td>
                 </tr>
                 </tbody>
             </table>

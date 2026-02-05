@@ -27,4 +27,8 @@ public class ProfessorService {
     public void excluir(Long id) {
         professorRepository.deleteById(id);
     }
+
+    public Professor buscarPorLogin(String login) {
+        return professorRepository.findByLogin(login);
+    }
 }

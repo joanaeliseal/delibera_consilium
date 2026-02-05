@@ -5,7 +5,7 @@
 <section>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2><i class="bi bi-broadcast"></i> Conducao da Sessao</h2>
+            <h2><i class="bi bi-broadcast"></i> Condução da Sessão</h2>
             <p class="text-muted mb-0">
                 Data: <strong th:text="${#temporals.format(reuniao.dataReuniao, 'dd/MM/yyyy')}"></strong> |
                 Colegiado: <strong th:text="${reuniao.colegiado?.curso}"></strong> |
@@ -18,7 +18,7 @@
                 <button type="submit" class="btn btn-danger"
                         th:disabled="${totalJulgados < totalProcessos}"
                         onclick="return confirm('Deseja finalizar esta sessao? Esta acao nao pode ser desfeita.')">
-                    <i class="bi bi-stop-fill"></i> Finalizar Sessao
+                    <i class="bi bi-stop-fill"></i> Finalizar Sessão
                 </button>
             </form>
         </div>
@@ -38,10 +38,10 @@
                 </div>
             </div>
             <small class="text-muted" th:if="${totalJulgados < totalProcessos}">
-                Julgue todos os processos para poder finalizar a sessao.
+                Julgue todos os processos para finalizar a sessão.
             </small>
             <small class="text-success" th:if="${totalJulgados >= totalProcessos && totalProcessos > 0}">
-                <i class="bi bi-check-circle"></i> Todos os processos foram julgados. Voce pode finalizar a sessao.
+                <i class="bi bi-check-circle"></i> Todos os processos foram julgados. Você pode finalizar a sessão.
             </small>
         </div>
     </div>
@@ -81,7 +81,7 @@
                             <div class="row">
                                 <!-- Informacoes do Processo -->
                                 <div class="col-md-6">
-                                    <h6><i class="bi bi-info-circle"></i> Informacoes</h6>
+                                    <h6><i class="bi bi-info-circle"></i> Informações</h6>
                                     <table class="table table-sm">
                                         <tr>
                                             <th>Protocolo:</th>
@@ -110,7 +110,7 @@
 
                                 <!-- Votacao -->
                                 <div class="col-md-6">
-                                    <h6><i class="bi bi-bar-chart"></i> Votacao</h6>
+                                    <h6><i class="bi bi-bar-chart"></i> Votação</h6>
                                     <th:block th:with="votos=${votosMap.get(p.id)}">
                                         <div class="row text-center mb-3">
                                             <div class="col-4">
@@ -146,7 +146,7 @@
                                     <!-- Acoes de Julgamento -->
                                     <th:block th:if="${p.status != 'JULGADO'}">
                                         <hr>
-                                        <h6><i class="bi bi-gavel"></i> Registrar Decisao</h6>
+                                        <h6><i class="bi bi-gavel"></i> Registrar Decisão</h6>
                                         <div class="d-grid gap-2">
                                             <form th:action="@{/coord/reunioes/{rid}/julgar/{pid}(rid=${reuniao.id}, pid=${p.id})}"
                                                   method="post" class="d-inline">
@@ -196,7 +196,7 @@
                 <div th:if="${reuniao.processosEmPauta == null || reuniao.processosEmPauta.isEmpty()}"
                      class="text-center text-muted py-5">
                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                    Nenhum processo na pauta desta reuniao.
+                    Nenhum processo na pauta desta reunião.
                 </div>
             </div>
         </div>

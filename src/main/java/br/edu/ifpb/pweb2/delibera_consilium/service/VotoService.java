@@ -45,6 +45,10 @@ public class VotoService {
             voto.setProfessor(professor);
         }
 
+        if (tipoVoto == TipoVoto.DIVERGENTE && (justificativa == null || justificativa.isBlank())) {
+            throw new RuntimeException("Justificativa é obrigatória para votos divergentes");
+        }
+
         voto.setVoto(tipoVoto);
         voto.setJustificativa(justificativa);
         voto.setAusente(false);

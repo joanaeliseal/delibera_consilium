@@ -36,7 +36,7 @@
                     </p>
                 </div>
                 <div class="col-md-4">
-                    <p><strong>Data Distribuicao:</strong>
+                    <p><strong>Data Distribuição:</strong>
                         <span th:text="${processo.dataDistribuicao != null ? #temporals.format(processo.dataDistribuicao, 'dd/MM/yyyy') : '-'}"></span>
                     </p>
                 </div>
@@ -56,14 +56,13 @@
         </div>
         <div class="card-body">
             <div th:if="${votoExistente}" class="alert alert-info">
-                <i class="bi bi-info-circle"></i> Voce ja votou neste processo.
+                <i class="bi bi-info-circle"></i> Você já votou neste processo.
                 Seu voto atual: <strong th:text="${votoExistente.ausente ? 'AUSENTE' : votoExistente.voto}"></strong>
                 <span th:if="${votoExistente.justificativa}"> - Justificativa: <em th:text="${votoExistente.justificativa}"></em></span>
             </div>
 
             <form th:action="@{/professor/votos/registrar}" method="post">
                 <input type="hidden" name="processoId" th:value="${processo.id}">
-                <input type="hidden" name="professorId" th:value="${professor?.id}">
 
                 <div class="mb-3">
                     <label for="tipoVoto" class="form-label">Tipo de Voto *</label>
@@ -76,7 +75,7 @@
                         </option>
                     </select>
                     <div class="form-text">
-                        <strong>COM_RELATOR:</strong> Concorda com o parecer do relator |
+                        <strong>COM RELATOR:</strong> Concorda com o parecer do relator |
                         <strong>DIVERGENTE:</strong> Discorda do parecer do relator
                     </div>
                 </div>
@@ -86,7 +85,7 @@
                     <textarea class="form-control" id="justificativa" name="justificativa" rows="4"
                               placeholder="Opcional: informe a justificativa do seu voto..."
                               th:text="${votoExistente?.justificativa}"></textarea>
-                    <div class="form-text">A justificativa e obrigatoria para votos divergentes.</div>
+                    <div class="form-text">A justificativa é obrigatória para votos divergentes.</div>
                 </div>
 
                 <div class="d-flex gap-2">
@@ -101,10 +100,9 @@
             <!-- Opcao de Ausencia -->
             <form th:action="@{/professor/votos/ausencia}" method="post" class="d-inline">
                 <input type="hidden" name="processoId" th:value="${processo.id}">
-                <input type="hidden" name="professorId" th:value="${professor?.id}">
                 <button type="submit" class="btn btn-outline-warning"
                         onclick="return confirm('Deseja registrar sua ausencia na votacao deste processo?')">
-                    <i class="bi bi-person-dash"></i> Registrar Ausencia
+                    <i class="bi bi-person-dash"></i> Registrar Ausência
                 </button>
             </form>
         </div>
